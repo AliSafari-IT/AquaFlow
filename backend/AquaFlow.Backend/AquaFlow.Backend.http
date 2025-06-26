@@ -1,0 +1,6 @@
+@AquaFlow.Backend_HostAddress = http://localhost:5185
+
+GET {{AquaFlow.Backend_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

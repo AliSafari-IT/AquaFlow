@@ -1,0 +1,3 @@
+packages:
+  - "frontend/aquaflow-frontend"
+  - "backend/AquaFlow.Backend"
