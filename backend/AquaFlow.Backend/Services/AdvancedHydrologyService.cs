@@ -48,10 +48,11 @@ public class AdvancedHydrologyService : IAdvancedHydrologyService
             totalRunoff += effectiveRainfall * dt;
             
             // Convert to inflow (mm/hr to m³/s)
-            double inflow = effectiveRainfall * area * 1000 / 3.6;
+            // Correct conversion: mm/hr * km² = mm*km²/hr = 1000*m³/hr = m³/3.6s  
+            double inflow = effectiveRainfall * area / 3.6;
             
             // Add evapotranspiration losses
-            double etLoss = input.EvapotranspirationMmPerHour * area * 1000 / 3.6;
+            double etLoss = input.EvapotranspirationMmPerHour * area / 3.6;
             inflow = Math.Max(0, inflow - etLoss);
             
             // Linear reservoir routing
@@ -144,7 +145,8 @@ public class AdvancedHydrologyService : IAdvancedHydrologyService
             totalRunoff = runoff;
             
             // Convert to inflow (mm to m³/s)
-            double inflow = incrementalRunoff * area * 1000 / (dt * 3600);
+            // Correct conversion: mm * km² / (dt * 3600) = mm*km²/s = m³/3.6s (since 1mm*1km² = 1000m³)
+            double inflow = incrementalRunoff * area / (dt * 3.6);
             
             // Linear reservoir routing
             // Convert K from hours to seconds for correct unit consistency
@@ -239,7 +241,8 @@ public class AdvancedHydrologyService : IAdvancedHydrologyService
             totalRunoff = runoff;
             
             // Convert to inflow for first reservoir
-            double inflow = incrementalRunoff * area * 1000 / (dt * 3600);
+            // Correct conversion: mm * km² / (dt * 3600) = mm*km²/s = m³/3.6s 
+            double inflow = incrementalRunoff * area / (dt * 3.6);
             
             // Route through reservoir chain
             for (int i = 0; i < input.NumberOfReservoirs; i++)
@@ -345,10 +348,11 @@ public class AdvancedHydrologyService : IAdvancedHydrologyService
             totalRunoff = runoff;
             
             // Convert to inflow with unit hydrograph effects
-            double inflow = incrementalRunoff * area * 1000 / (dt * 3600);
+            // Correct conversion: mm * km² / (dt * 3600) = mm*km²/s = m³/3.6s
+            double inflow = incrementalRunoff * area / (dt * 3.6);
             
             // Apply evapotranspiration losses
-            double etLoss = input.EvapotranspirationMmPerHour * area * 1000 / 3.6;
+            double etLoss = input.EvapotranspirationMmPerHour * area / 3.6;
             inflow = Math.Max(0, inflow - etLoss);
             
             // Route through reservoir chain with variable K

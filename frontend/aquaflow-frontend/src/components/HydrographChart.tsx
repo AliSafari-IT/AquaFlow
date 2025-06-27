@@ -1,6 +1,6 @@
 // components/HydrographChart.tsx
 import { Line, getElementAtEvent, getDatasetAtEvent } from 'react-chartjs-2';
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { Chart as ChartJS } from 'chart.js';
 
 interface HydrographDataPoint {
@@ -257,51 +257,121 @@ export default function HydrographChart({ data, csvData, showObservations = fals
     }
   };
 
+  // Function to download hydrograph data as CSV
+  const downloadCSV = () => {
+    if (!data || data.length === 0) return;
+
+    // Create CSV content
+    const headers = ['Time (hours)', 'Flow (m³/s)'];
+    const csvContent = [
+      headers.join(','),
+      ...data.map(point => 
+        `${point.timeHours},${point.flowCubicMetersPerSecond.toFixed(4)}`
+      )
+    ].join('\n');
+
+    // Create and download the file
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'hydrograph_data.csv';
+    link.click();
+    URL.revokeObjectURL(link.href);
+  };
+
   return (
     <div className="hydrograph-chart-container" style={{ position: 'relative' }}>
-      {/* Save Button */}
-      <button
-        onClick={downloadChart}
-        style={{
-          position: 'absolute',
-          top: '10px',
-          right: '10px',
-          zIndex: 10,
-          background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
-          color: 'white',
-          border: '1px solid rgba(255,255,255,0.3)',
-          borderRadius: '8px',
-          padding: '8px 12px',
-          cursor: 'pointer',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '6px',
-          fontSize: '14px',
-          fontWeight: '600',
-          boxShadow: '0 4px 12px rgba(59, 130, 246, 0.4), 0 2px 4px rgba(0,0,0,0.1)',
-          transition: 'all 0.2s ease',
-          backdropFilter: 'blur(8px)',
-          WebkitBackdropFilter: 'blur(8px)',
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.transform = 'translateY(-2px)';
-          e.currentTarget.style.boxShadow = '0 6px 16px rgba(59, 130, 246, 0.5), 0 4px 8px rgba(0,0,0,0.15)';
-          e.currentTarget.style.background = 'linear-gradient(135deg, #2563eb, #1e40af)';
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.transform = 'translateY(0)';
-          e.currentTarget.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.4), 0 2px 4px rgba(0,0,0,0.1)';
-          e.currentTarget.style.background = 'linear-gradient(135deg, #3b82f6, #1d4ed8)';
-        }}
-        title="Download chart as PNG"
-      >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-          <polyline points="7,10 12,15 17,10"/>
-          <line x1="12" y1="15" x2="12" y2="3"/>
-        </svg>
-        Save PNG
-      </button>
+      {/* Download Buttons */}
+      <div style={{
+        position: 'absolute',
+        top: '8px',
+        right: '8px',
+        zIndex: 10,
+        display: 'flex',
+        gap: '4px'
+      }}>
+        {/* Save PNG Button */}
+        <button
+          onClick={downloadChart}
+          style={{
+            background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+            color: 'white',
+            border: '1px solid rgba(255,255,255,0.3)',
+            borderRadius: '6px',
+            padding: '6px 8px',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '4px',
+            fontSize: '12px',
+            fontWeight: '500',
+            boxShadow: '0 2px 8px rgba(59, 130, 246, 0.3)',
+            transition: 'all 0.2s ease',
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'translateY(-1px)';
+            e.currentTarget.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.4)';
+            e.currentTarget.style.background = 'linear-gradient(135deg, #2563eb, #1e40af)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = '0 2px 8px rgba(59, 130, 246, 0.3)';
+            e.currentTarget.style.background = 'linear-gradient(135deg, #3b82f6, #1d4ed8)';
+          }}
+          title="Download chart as PNG"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7,10 12,15 17,10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          PNG
+        </button>
+
+        {/* Save CSV Button */}
+        <button
+          onClick={downloadCSV}
+          style={{
+            background: 'linear-gradient(135deg, #10b981, #059669)',
+            color: 'white',
+            border: '1px solid rgba(255,255,255,0.3)',
+            borderRadius: '6px',
+            padding: '6px 8px',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '4px',
+            fontSize: '12px',
+            fontWeight: '500',
+            boxShadow: '0 2px 8px rgba(16, 185, 129, 0.3)',
+            transition: 'all 0.2s ease',
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'translateY(-1px)';
+            e.currentTarget.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.4)';
+            e.currentTarget.style.background = 'linear-gradient(135deg, #059669, #047857)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = '0 2px 8px rgba(16, 185, 129, 0.3)';
+            e.currentTarget.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+          }}
+          title="Download hydrograph data as CSV"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14,2 14,8 20,8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+            <polyline points="10,9 9,9 8,9"/>
+          </svg>
+          CSV
+        </button>
+      </div>
       
       <Line ref={chartRef} data={chartData} options={options} />
       
