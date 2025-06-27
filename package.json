@@ -6,10 +6,10 @@
     "frontend/aquaflow-frontend"
   ],
   "scripts": {
-    "dev:frontend": "pnpm --filter aquaflow-frontend start",
+    "ui": "pnpm --filter aquaflow-frontend start",
     "build:frontend": "pnpm --filter aquaflow-frontend build",
     "test:frontend": "pnpm --filter aquaflow-frontend test",
-    "dev:backend": "cd backend/AquaFlow.Backend && dotnet run",
+    "api": "cd backend/AquaFlow.Backend && dotnet run",
     "build:backend": "cd backend/AquaFlow.Backend && dotnet build"
   },
   "pnpm": {

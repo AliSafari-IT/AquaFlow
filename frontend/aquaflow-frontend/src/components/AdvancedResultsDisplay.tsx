@@ -1,5 +1,6 @@
 import React from 'react';
 import HydrographChart from './HydrographChart';
+import DataDiagnostics from './DataDiagnostics';
 import './AdvancedResultsDisplay.css';
 
 interface ModelSummary {
@@ -21,9 +22,19 @@ interface HydrographResult {
 
 interface AdvancedResultsDisplayProps {
   result: HydrographResult;
+  csvData?: Array<{
+    year: number;
+    month: number;
+    day: number;
+    hour: number;
+    flowCubicMetersPerSecond: number;
+    timeHours: number;
+  }>;
+  showObservations?: boolean;
+  onToggleObservations?: (show: boolean) => void;
 }
 
-export default function AdvancedResultsDisplay({ result }: AdvancedResultsDisplayProps) {
+export default function AdvancedResultsDisplay({ result, csvData, showObservations = false, onToggleObservations }: AdvancedResultsDisplayProps) {
   const { hydrographPoints, modelSummary, calculationNotes } = result;
 
   const formatNumber = (num: number, decimals: number = 2): string => {
@@ -38,6 +49,37 @@ export default function AdvancedResultsDisplay({ result }: AdvancedResultsDispla
     if (num >= 1e3) return `${(num / 1e3).toFixed(1)}K`;
     return num.toFixed(2);
   };
+
+  // Helper function to calculate comparison statistics
+  const calculateComparisonStats = (modeledData: Array<{ timeHours: number; flowCubicMetersPerSecond: number }>, observedData: Array<{
+    year: number;
+    month: number;
+    day: number;
+    hour: number;
+    flowCubicMetersPerSecond: number;
+    timeHours: number;
+  }>) => {
+    if (!modeledData || !observedData || modeledData.length === 0 || observedData.length === 0) {
+      return null;
+    }
+
+    const modeledPeak = Math.max(...modeledData.map(d => d.flowCubicMetersPerSecond));
+    const observedPeak = Math.max(...observedData.map(d => d.flowCubicMetersPerSecond));
+    
+    const peakDifference = modeledPeak - observedPeak;
+    const peakPercentError = ((Math.abs(peakDifference) / observedPeak) * 100);
+    
+    return {
+      modeledPeak,
+      observedPeak,
+      peakDifference,
+      peakPercentError,
+      peakOverprediction: peakDifference > 0
+    };
+  };
+
+  const comparisonStats = showObservations && csvData ? 
+    calculateComparisonStats(hydrographPoints, csvData) : null;
 
   return (
     <div className="advanced-results-container">
@@ -109,10 +151,89 @@ export default function AdvancedResultsDisplay({ result }: AdvancedResultsDispla
       {/* Hydrograph Chart */}
       <div className="chart-section">
         <div className="chart-container">
-          <h3 className="chart-title">Generated Hydrograph</h3>
-          <HydrographChart data={hydrographPoints} />
+          <div className="chart-header">
+            <h3 className="chart-title">
+              {showObservations && csvData ? 'Model vs Observations Comparison' : 'Modeled Hydrograph'}
+            </h3>
+            {csvData && csvData.length > 0 && onToggleObservations && (
+              <div className="observation-toggle">
+                <label className="toggle-label">
+                  <input
+                    type="checkbox"
+                    checked={showObservations}
+                    onChange={(e) => onToggleObservations(e.target.checked)}
+                  />
+                  Show Observed Data
+                </label>
+              </div>
+            )}
+          </div>
+          
+          {/* Debug diagnostics - remove this after troubleshooting */}
+          <DataDiagnostics 
+            modeledData={hydrographPoints} 
+            csvData={csvData} 
+          />
+          
+          <HydrographChart 
+            data={hydrographPoints} 
+            csvData={csvData} 
+            showObservations={showObservations && csvData && csvData.length > 0}
+          />
         </div>
       </div>
+
+      {/* Comparison Statistics */}
+      {comparisonStats && showObservations && (
+        <div className="comparison-stats-section">
+          <div className="comparison-stats-container">
+            <h3 className="comparison-title">📊 Model vs Observations Analysis</h3>
+            <div className="stats-grid">
+              <div className="stat-card">
+                <div className="stat-icon">🔬</div>
+                <div className="stat-content">
+                  <span className="stat-label">Modeled Peak</span>
+                  <span className="stat-value">{comparisonStats.modeledPeak.toFixed(2)} m³/s</span>
+                </div>
+              </div>
+              <div className="stat-card">
+                <div className="stat-icon">📈</div>
+                <div className="stat-content">
+                  <span className="stat-label">Observed Peak</span>
+                  <span className="stat-value">{comparisonStats.observedPeak.toFixed(2)} m³/s</span>
+                </div>
+              </div>
+              <div className={`stat-card ${comparisonStats.peakOverprediction ? 'overprediction' : 'underprediction'}`}>
+                <div className="stat-icon">{comparisonStats.peakOverprediction ? '⬆️' : '⬇️'}</div>
+                <div className="stat-content">
+                  <span className="stat-label">Peak Difference</span>
+                  <span className="stat-value">
+                    {comparisonStats.peakOverprediction ? '+' : ''}{comparisonStats.peakDifference.toFixed(2)} m³/s
+                  </span>
+                </div>
+              </div>
+              <div className={`stat-card ${comparisonStats.peakPercentError < 20 ? 'good-fit' : comparisonStats.peakPercentError < 50 ? 'fair-fit' : 'poor-fit'}`}>
+                <div className="stat-icon">{comparisonStats.peakPercentError < 20 ? '✅' : comparisonStats.peakPercentError < 50 ? '⚠️' : '❌'}</div>
+                <div className="stat-content">
+                  <span className="stat-label">Percent Error</span>
+                  <span className="stat-value">{comparisonStats.peakPercentError.toFixed(1)}%</span>
+                </div>
+              </div>
+            </div>
+            <div className="performance-indicator">
+              <p>
+                <strong>Model Performance:</strong> 
+                {comparisonStats.peakPercentError < 20 ? 
+                  ' Excellent agreement - The selected model parameters closely reproduce the observed hydrograph!' :
+                  comparisonStats.peakPercentError < 50 ?
+                  ' Good agreement - The model captures the general behavior with some deviation. Consider parameter calibration.' :
+                  ' Poor agreement - Significant differences suggest the need for parameter adjustment or alternative model selection.'
+                }
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Model-Specific Parameters */}
       <div className="parameters-section">
@@ -179,6 +300,12 @@ export default function AdvancedResultsDisplay({ result }: AdvancedResultsDispla
             </p>
           </div>
         </div>
+      </div>
+
+      {/* Data Diagnostics - Debugging Component */}
+      <div className="data-diagnostics-section">
+        <h3 className="section-title">Data Diagnostics</h3>
+        <DataDiagnostics modeledData={hydrographPoints} csvData={csvData} />
       </div>
     </div>
   );

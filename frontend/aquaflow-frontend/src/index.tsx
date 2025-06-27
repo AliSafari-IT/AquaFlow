@@ -1,17 +1,21 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
 // Import chart setup to register Chart.js components
-import './chartSetup';
+import "./chartSetup";
+import { ThemeProvider } from "@asafarim/react-themes";
+import "@asafarim/react-themes/styles.css"; // Optional base styles
 
 const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
+  document.getElementById("root") as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <App />
+    <ThemeProvider defaultMode="auto" persistMode={true}>
+      <App />
+    </ThemeProvider>
   </React.StrictMode>
 );
 

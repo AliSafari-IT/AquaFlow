@@ -64,7 +64,7 @@ export const ThemeToggle: React.FC = () => {
       aria-label={`Switch from ${getThemeLabel()} theme`}
     >
       <span className="theme-icon">{getThemeIcon()}</span>
-      <span className="theme-label">{getThemeLabel()}</span>
+      {/* <span className="theme-label">{getThemeLabel()}</span> */}
     </button>
   );
 };

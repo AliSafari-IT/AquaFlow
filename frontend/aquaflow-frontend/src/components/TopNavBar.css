@@ -1,0 +1,397 @@
+@import url('../styles/base-styles.css');
+
+/* TopNavBar.css - Using theme variables */
+.top-navbar {
+  background: var(--bg-accent, #2c5282);
+  color: var(--text-light, #ffffff);
+  box-shadow: var(--shadow-md);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  border-bottom: 1px solid var(--border-color, #e2e8f0);
+}
+
+.navbar-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--theme-spacing-md, 0.75rem) var(--theme-spacing-lg, 1.5rem);
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  overflow: visible;
+}
+
+/* Logo and Brand */
+.navbar-brand {
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: opacity var(--theme-transition-normal, 0.2s ease);
+}
+
+.navbar-brand:hover {
+  opacity: 0.8;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: var(--theme-spacing-sm, 0.5rem);
+  margin-bottom: 0.125rem;
+}
+
+.logo-icon {
+  font-size: var(--theme-font-size-xl, 1.5rem);
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-3px); }
+}
+
+.logo-text {
+  font-size: var(--theme-font-size-xl, 1.5rem);
+  font-weight: 700;
+  color: var(--text-light, #ffffff);
+}
+
+.tagline {
+  font-size: var(--theme-font-size-xs, 0.75rem);
+  color: var(--text-muted, rgba(255, 255, 255, 0.7));
+  font-weight: 400;
+  margin-left: 2rem;
+}
+
+/* Navigation Items */
+.navbar-nav {
+  display: flex;
+  gap: var(--theme-spacing-sm, 0.5rem);
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--theme-spacing-sm, 0.5rem);
+  padding: var(--theme-spacing-sm, 0.5rem) var(--theme-spacing-md, 1rem);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--theme-radius-md, 0.5rem);
+  color: var(--text-light, rgba(255, 255, 255, 0.8));
+  cursor: pointer;
+  transition: all var(--theme-transition-normal, 0.2s ease);
+  font-size: var(--theme-font-size-sm, 0.9rem);
+  font-weight: 500;
+}
+
+.nav-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: var(--text-light, #ffffff);
+  transform: translateY(-1px);
+}
+
+.nav-item.active {
+  background: var(--accent-primary, #4299e1);
+  border-color: var(--accent-primary, #4299e1);
+  color: var(--text-light, #ffffff);
+  box-shadow: var(--shadow-sm);
+}
+
+.nav-icon {
+  font-size: var(--theme-font-size-base, 1rem);
+}
+
+.nav-label {
+  font-size: var(--theme-font-size-sm, 0.875rem);
+}
+
+.help-trigger {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 0.5rem;
+  color: var(--text-light, rgba(255, 255, 255, 0.9));
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.help-trigger:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.5);
+  color: var(--text-light, #ffffff);
+}
+
+.help-trigger:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
+}
+
+.help-icon {
+  font-size: 1rem;
+}
+
+.help-label {
+  font-size: 0.875rem;
+}
+
+.dropdown-arrow {
+  font-size: 0.75rem;
+  transition: transform 0.2s ease;
+}
+
+.help-trigger:hover .dropdown-arrow {
+  transform: rotate(180deg);
+}
+
+/* Universal DDMenu Dropdown Fixes */
+/* Target the dropdown container and all possible DDMenu structures */
+.dropdown-container {
+  position: relative !important;
+  overflow: visible !important;
+  z-index: 102 !important;
+}
+
+/* Force vertical layout for DDMenu dropdown */
+.dropdown-container > div:not(:first-child),
+.dropdown-container > [class*="menu"],
+.dropdown-container > [class*="dropdown"],
+.dropdown-container div[style*="position"],
+.dropdown-container [data-ddmenu-dropdown] {
+  position: absolute !important;
+  top: calc(100% + 8px) !important;
+  right: 0 !important;
+  left: auto !important;
+  background: var(--bg-primary, #ffffff) !important;
+  border: 1px solid var(--border-color, #e2e8f0) !important;
+  border-radius: var(--theme-radius-md, 0.5rem) !important;
+  box-shadow: var(--shadow-lg, 0 4px 12px rgba(0, 0, 0, 0.15)) !important;
+  min-width: 200px !important;
+  max-width: 300px !important;
+  z-index: 1001 !important;
+  overflow: hidden !important;
+  max-height: 400px !important;
+  overflow-y: auto !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  display: block !important;
+  width: auto !important;
+  height: auto !important;
+  transform: none !important;
+  flex-direction: column !important;
+}
+
+/* Force vertical layout for any nested containers */
+.dropdown-container > div:not(:first-child) > *,
+.dropdown-container [data-ddmenu-dropdown] > *,
+.dropdown-container div[style*="position"] > * {
+  display: block !important;
+  width: 100% !important;
+  position: static !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+}
+
+/* Universal menu item styling */
+.dropdown-container button:not(.help-trigger),
+.dropdown-container a:not(.help-trigger),
+.dropdown-container [role="menuitem"],
+.dropdown-container div[style*="position"] button,
+.dropdown-container div[style*="position"] a,
+.dropdown-container > div:not(:first-child) button,
+.dropdown-container > div:not(:first-child) a {
+  display: block !important;
+  width: 100% !important;
+  padding: var(--theme-spacing-sm, 0.75rem) var(--theme-spacing-md, 1rem) !important;
+  margin: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 1px solid var(--border-light, #f1f5f9) !important;
+  color: var(--text-primary, #2d3748) !important;
+  text-align: left !important;
+  cursor: pointer !important;
+  transition: all var(--theme-transition-normal, 0.2s ease) !important;
+  font-size: var(--theme-font-size-sm, 0.875rem) !important;
+  font-weight: 500 !important;
+  text-decoration: none !important;
+  white-space: nowrap !important;
+  box-sizing: border-box !important;
+  position: static !important;
+  transform: none !important;
+  flex-direction: row !important;
+  justify-content: flex-start !important;
+  align-items: center !important;
+  min-height: 44px !important;
+}
+
+/* Hover states for menu items */
+.dropdown-container button:not(.help-trigger):hover,
+.dropdown-container a:not(.help-trigger):hover,
+.dropdown-container [role="menuitem"]:hover,
+.dropdown-container div[style*="position"] button:hover,
+.dropdown-container div[style*="position"] a:hover,
+.dropdown-container > div:not(:first-child) button:hover,
+.dropdown-container > div:not(:first-child) a:hover {
+  background: var(--bg-secondary, #f7fafc) !important;
+  color: var(--accent-primary, #2c5282) !important;
+}
+
+/* Remove border from last menu item */
+.dropdown-container button:not(.help-trigger):last-child,
+.dropdown-container a:not(.help-trigger):last-child,
+.dropdown-container [role="menuitem"]:last-child,
+.dropdown-container div[style*="position"] button:last-child,
+.dropdown-container div[style*="position"] a:last-child,
+.dropdown-container > div:not(:first-child) button:last-child,
+.dropdown-container > div:not(:first-child) a:last-child {
+  border-bottom: none !important;
+}
+
+/* Aggressive override for inline styles */
+.dropdown-container [style*="display: flex"] {
+  display: block !important;
+  flex-direction: column !important;
+}
+
+.dropdown-container [style*="display: inline"] {
+  display: block !important;
+}
+
+.dropdown-container [style*="flex-direction: row"] {
+  flex-direction: column !important;
+}
+
+/* Ensure dropdown appears above other content */
+.dropdown-container::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 10px;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+/* Dark theme support for dropdown - Enhanced */
+[data-theme="dark"] .dropdown-container > div:not(:first-child),
+[data-theme="dark"] .dropdown-container [data-ddmenu-dropdown],
+[data-theme="dark"] .dropdown-container div[style*="position"] {
+  background: var(--bg-secondary-dark, #2d3748) !important;
+  border-color: var(--border-dark, #4a5568) !important;
+}
+
+[data-theme="dark"] .dropdown-container button:not(.help-trigger),
+[data-theme="dark"] .dropdown-container a:not(.help-trigger),
+[data-theme="dark"] .dropdown-container [role="menuitem"],
+[data-theme="dark"] .dropdown-container div[style*="position"] button,
+[data-theme="dark"] .dropdown-container div[style*="position"] a {
+  color: var(--text-light, #e2e8f0) !important;
+  border-bottom-color: var(--border-dark, #4a5568) !important;
+}
+
+[data-theme="dark"] .dropdown-container button:not(.help-trigger):hover,
+[data-theme="dark"] .dropdown-container a:not(.help-trigger):hover,
+[data-theme="dark"] .dropdown-container [role="menuitem"]:hover,
+[data-theme="dark"] .dropdown-container div[style*="position"] button:hover,
+[data-theme="dark"] .dropdown-container div[style*="position"] a:hover {
+  background: var(--bg-accent-dark, #4a5568) !important;
+  color: var(--accent-light, #63b3ed) !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .navbar-container {
+    padding: var(--theme-spacing-sm, 0.5rem) var(--theme-spacing-md, 1rem);
+    flex-wrap: wrap;
+    gap: var(--theme-spacing-sm, 0.5rem);
+  }
+
+  .navbar-brand {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .tagline {
+    display: none;
+  }
+
+  .navbar-nav {
+    order: 3;
+    flex-basis: 100%;
+    justify-content: center;
+    margin-top: var(--theme-spacing-sm, 0.5rem);
+    gap: var(--theme-spacing-xs, 0.25rem);
+  }
+
+  .nav-item {
+    padding: var(--theme-spacing-xs, 0.4rem) var(--theme-spacing-sm, 0.8rem);
+    font-size: var(--theme-font-size-xs, 0.8rem);
+  }
+
+  .nav-label {
+    display: none;
+  }
+
+  .navbar-actions {
+    gap: var(--theme-spacing-sm, 0.5rem);
+  }
+
+  .help-trigger {
+    padding: var(--theme-spacing-xs, 0.4rem) var(--theme-spacing-sm, 0.8rem);
+  }
+
+  .help-label {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar-container {
+    padding: var(--theme-spacing-sm, 0.5rem);
+  }
+
+  .logo-text {
+    font-size: var(--theme-font-size-lg, 1.25rem);
+  }
+
+  .nav-item {
+    padding: var(--theme-spacing-xs, 0.3rem) var(--theme-spacing-sm, 0.6rem);
+  }
+
+  .help-trigger {
+    padding: var(--theme-spacing-xs, 0.3rem) var(--theme-spacing-sm, 0.6rem);
+  }
+}
+
+/* Theme Support */
+[data-theme="dark"] .top-navbar {
+  background: var(--primary-dark, #1a202c);
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .help-dropdown {
+  background: var(--background-dark, #2d3748);
+  border-color: var(--border-dark, #4a5568);
+}
+
+[data-theme="dark"] .help-dropdown .dropdown-item {
+  color: var(--text-light, #e2e8f0);
+}
+
+[data-theme="dark"] .help-dropdown .dropdown-item:hover {
+  background: var(--background-accent-dark, #4a5568);
+  color: var(--accent-light, #63b3ed);
+}
+
+[data-theme="dark"] .help-dropdown .dropdown-item:not(:last-child) {
+  border-bottom-color: var(--border-dark, #4a5568);
+}

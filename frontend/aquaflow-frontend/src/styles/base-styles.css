@@ -1,0 +1,206 @@
+@import url('./variables.css');
+/* Optional Base Styles */
+.theme-base {
+  font-family: var(--theme-font-family-sans);
+  font-size: var(--theme-font-size-base);
+  color: var(--theme-color-text);
+  background-color: var(--theme-color-background);
+  transition: color var(--theme-transition-normal), background-color var(--theme-transition-normal);
+}
+
+/* Theme Toggle Button Styles */
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--theme-spacing-sm) var(--theme-spacing-md);
+  border: 1px solid var(--theme-color-border);
+  border-radius: var(--theme-radius-md);
+  background-color: var(--theme-color-background);
+  color: var(--theme-color-text);
+  cursor: pointer;
+  transition: all var(--theme-transition-normal);
+  font-size: var(--theme-font-size-sm);
+  font-weight: 500;
+}
+
+.theme-toggle:hover {
+  background-color: var(--theme-color-hover);
+  border-color: var(--theme-color-border-hover);
+}
+
+.theme-toggle:focus {
+  outline: none;
+  background-color: var(--theme-color-hover);
+  border-color: var(--theme-color-primary);
+  box-shadow: 0 0 0 3px var(--theme-color-focus);
+}
+
+/* Theme Selector Styles */
+.theme-selector {
+  padding: var(--theme-spacing-sm) var(--theme-spacing-md);
+  border: 1px solid var(--theme-color-border);
+  border-radius: var(--theme-radius-md);
+  background-color: var(--theme-color-background);
+  color: var(--theme-color-text);
+  font-size: var(--theme-font-size-sm);
+  transition: all var(--theme-transition-normal);
+}
+
+.theme-selector:focus {
+  outline: none;
+  border-color: var(--theme-color-primary);
+  box-shadow: 0 0 0 3px var(--theme-color-focus);
+}
+
+/* Utility Classes */
+.theme-bg-primary {
+  background-color: var(--theme-color-background);
+}
+
+.theme-bg-secondary {
+  background-color: var(--theme-color-background-secondary);
+}
+
+.theme-text-primary {
+  color: var(--theme-color-text);
+}
+
+.theme-text-secondary {
+  color: var(--theme-color-text-secondary);
+}
+
+.theme-text-muted {
+  color: var(--theme-color-text-muted);
+}
+
+.theme-border {
+  border: 1px solid var(--theme-color-border);
+}
+
+.theme-rounded {
+  border-radius: var(--theme-radius-md);
+}
+
+.theme-shadow {
+  box-shadow: var(--theme-color-shadow, 0 1px 3px 0 rgba(0, 0, 0, 0.1));
+}
+
+/* Dropdown specific utility classes */
+.theme-dropdown {
+  background-color: var(--theme-color-background);
+  border: 1px solid var(--theme-color-border);
+  border-radius: var(--theme-radius-md);
+  box-shadow: var(--theme-color-shadow, 0 4px 12px rgba(0, 0, 0, 0.15));
+  z-index: 1000;
+}
+
+.theme-dropdown-item {
+  padding: var(--theme-spacing-sm) var(--theme-spacing-md);
+  color: var(--theme-color-text);
+  transition: background-color var(--theme-transition-normal);
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+  font-size: var(--theme-font-size-sm);
+}
+
+.theme-dropdown-item:hover {
+  background-color: var(--theme-color-hover);
+  color: var(--theme-color-primary);
+}
+
+/* Navigation specific classes */
+.theme-nav {
+  background-color: var(--theme-color-primary, var(--bg-accent));
+  color: var(--theme-color-text-inverse, var(--text-light));
+  box-shadow: var(--theme-color-shadow, var(--shadow-md));
+}
+
+.theme-nav-item {
+  padding: var(--theme-spacing-sm) var(--theme-spacing-md);
+  border-radius: var(--theme-radius-sm);
+  transition: all var(--theme-transition-normal);
+  background: transparent;
+  border: 1px solid transparent;
+}
+
+.theme-nav-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.theme-nav-item.active {
+  background-color: var(--theme-color-primary-variant, var(--accent-primary));
+  border-color: var(--theme-color-primary-variant, var(--accent-primary));
+}
+
+/* Dark mode body class support */
+body.theme-dark {
+  color-scheme: dark;
+}
+
+body.theme-light {
+  color-scheme: light;
+}
+
+/* Smooth transitions for theme changes */
+* {
+  transition: background-color var(--theme-transition-normal), 
+              color var(--theme-transition-normal), 
+              border-color var(--theme-transition-normal);
+}
+
+/* Remove transitions for users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Global DDMenu fixes - ensure vertical dropdown layout */
+/* Target any DDMenu dropdown regardless of how it's implemented */
+[role="menu"],
+[data-dropdown],
+[data-ddmenu],
+.dd-menu-dropdown,
+.dropdown-menu,
+div[style*="position: absolute"][style*="top:"],
+div[style*="position:absolute"][style*="top:"] {
+  flex-direction: column !important;
+  align-items: stretch !important;
+}
+
+/* Ensure menu items in any dropdown are vertically stacked */
+[role="menu"] > *,
+[data-dropdown] > *,
+[data-ddmenu] > *,
+.dd-menu-dropdown > *,
+.dropdown-menu > *,
+div[style*="position: absolute"] > * {
+  display: block !important;
+  width: 100% !important;
+  flex-direction: row !important;
+  align-items: center !important;
+}
+
+/* Force any buttons/links in dropdowns to be full width */
+[role="menu"] button,
+[role="menu"] a,
+[data-dropdown] button,
+[data-dropdown] a,
+[data-ddmenu] button,
+[data-ddmenu] a,
+.dd-menu-dropdown button,
+.dd-menu-dropdown a,
+.dropdown-menu button,
+.dropdown-menu a {
+  display: block !important;
+  width: 100% !important;
+  text-align: left !important;
+  box-sizing: border-box !important;
+}
