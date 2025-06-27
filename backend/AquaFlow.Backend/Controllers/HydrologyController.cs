@@ -19,7 +19,11 @@ public class HydrologyController : ControllerBase
 
     [HttpPost("calculate-advanced")]
     public ActionResult<HydrographResult> CalculateAdvanced([FromBody] AdvancedHydrologicalInput input)
-        => Ok(_advancedSvc.CalculateAdvancedHydrograph(input));
+    {
+        // Debug: Log the received model
+        Console.WriteLine($"Received model: {input.SelectedModel}");
+        return Ok(_advancedSvc.CalculateAdvancedHydrograph(input));
+    }
 
     [HttpGet("models")]
     public ActionResult<object> GetAvailableModels()
@@ -28,7 +32,7 @@ public class HydrologyController : ControllerBase
         {
             Models = new[]
             {
-                new { Value = "SimpleLinearReservoir", Name = "Simple Linear Reservoir", Description = "Basic linear reservoir routing with runoff coefficient" },
+                new { Value = "SimpleLinearReservoir", Name = "Advanced Linear Reservoir", Description = "Basic linear reservoir routing with runoff coefficient" },
                 new { Value = "CurveNumberMethod", Name = "SCS Curve Number Method", Description = "USDA SCS Curve Number method for runoff calculation" },
                 new { Value = "LinearReservoirChain", Name = "Linear Reservoir Chain", Description = "Multiple linear reservoirs in series for realistic routing" },
                 new { Value = "CombinedModel", Name = "Combined SCS-UH Model", Description = "Advanced model combining SCS method with unit hydrograph theory" }

@@ -53,14 +53,16 @@ interface CsvDataPoint {
 // Helper function to convert model string to enum value
 const getModelEnumValue = (modelString: string): number => {
   switch (modelString) {
-    case "SCS Curve Number":
+    case "SimpleLinearReservoir":
       return 0;
-    case "Green-Ampt":
+    case "CurveNumberMethod":
       return 1;
-    case "Rational Method":
+    case "LinearReservoirChain":
       return 2;
+    case "CombinedModel":
+      return 3;
     default:
-      return 0;
+      return 0; // Default to SimpleLinearReservoir
   }
 };
 
@@ -150,7 +152,7 @@ const SimpleModelPage: React.FC<{ csvData: CsvDataPoint[] }> = ({ csvData }) => 
                 data={hydrographData}
                 csvData={csvData}
                 showObservations={csvData.length > 0}
-                modelName="Simple Linear Reservoir"
+                modelName="Basic Linear Reservoir"
               />
             </div>
           </div>
@@ -194,6 +196,10 @@ const AdvancedModelPage: React.FC<{ csvData: CsvDataPoint[] }> = ({ csvData }) =
         EvapotranspirationMmPerHour: params.evapotranspirationMmPerHour,
         BaseFlowCubicMetersPerSecond: params.baseFlowCubicMetersPerSecond,
       };
+
+      console.log('Frontend selected model:', params.selectedModel);
+      console.log('Mapped to enum value:', getModelEnumValue(params.selectedModel));
+      console.log('Full backend params:', backendParams);
 
       const res = await fetch(
         "http://localhost:5185/api/hydrology/calculate-advanced",
@@ -357,7 +363,7 @@ const CsvDataPage: React.FC<{
                 data={hydrographData}
                 csvData={csvData}
                 showObservations={csvData.length > 0}
-                modelName="Simple Linear Reservoir"
+                modelName="Basic Linear Reservoir"
               />
             </div>
           </div>

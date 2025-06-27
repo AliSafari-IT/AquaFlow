@@ -7,6 +7,7 @@ public class AdvancedHydrologyService : IAdvancedHydrologyService
 {
     public HydrographResult CalculateAdvancedHydrograph(AdvancedHydrologicalInput input)
     {
+        Console.WriteLine($"Processing model: {input.SelectedModel}");
         return input.SelectedModel switch
         {
             RunoffModel.SimpleLinearReservoir => CalculateSimpleLinearReservoir(input),
@@ -77,7 +78,7 @@ public class AdvancedHydrologyService : IAdvancedHydrologyService
         result.HydrographPoints = hydro;
         result.ModelSummary = new RunoffModelSummary
         {
-            ModelName = "Simple Linear Reservoir",
+            ModelName = "Advanced Linear Reservoir",
             TotalRainfallMm = totalRainfall,
             TotalRunoffMm = totalRunoff,
             RunoffCoefficient = runoffCoef,
@@ -145,8 +146,8 @@ public class AdvancedHydrologyService : IAdvancedHydrologyService
             totalRunoff = runoff;
             
             // Convert to inflow (mm to m³/s)
-            // Correct conversion: mm * km² / (dt * 3600) = mm*km²/s = m³/3.6s (since 1mm*1km² = 1000m³)
-            double inflow = incrementalRunoff * area / (dt * 3.6);
+            // Correct conversion: mm * km² = mm*km²/hr = 1000*m³/hr = m³/3.6s
+            double inflow = incrementalRunoff * area / 3.6;
             
             // Linear reservoir routing
             // Convert K from hours to seconds for correct unit consistency
@@ -241,8 +242,8 @@ public class AdvancedHydrologyService : IAdvancedHydrologyService
             totalRunoff = runoff;
             
             // Convert to inflow for first reservoir
-            // Correct conversion: mm * km² / (dt * 3600) = mm*km²/s = m³/3.6s 
-            double inflow = incrementalRunoff * area / (dt * 3.6);
+            // Correct conversion: mm * km² = mm*km²/hr = 1000*m³/hr = m³/3.6s
+            double inflow = incrementalRunoff * area / 3.6;
             
             // Route through reservoir chain
             for (int i = 0; i < input.NumberOfReservoirs; i++)
@@ -348,8 +349,8 @@ public class AdvancedHydrologyService : IAdvancedHydrologyService
             totalRunoff = runoff;
             
             // Convert to inflow with unit hydrograph effects
-            // Correct conversion: mm * km² / (dt * 3600) = mm*km²/s = m³/3.6s
-            double inflow = incrementalRunoff * area / (dt * 3.6);
+            // Correct conversion: mm * km² = mm*km²/hr = 1000*m³/hr = m³/3.6s
+            double inflow = incrementalRunoff * area / 3.6;
             
             // Apply evapotranspiration losses
             double etLoss = input.EvapotranspirationMmPerHour * area / 3.6;
@@ -359,7 +360,8 @@ public class AdvancedHydrologyService : IAdvancedHydrologyService
             double currentK = K / numReservoirs;
             for (int i = 0; i < numReservoirs; i++)
             {
-                double outflow = storage[i] / currentK;
+                // Convert K from hours to seconds for correct unit consistency
+                double outflow = storage[i] / (currentK * 3600);
                 storage[i] += (inflow - outflow) * dt * 3600;
                 if (storage[i] < 0) storage[i] = 0;
                 
