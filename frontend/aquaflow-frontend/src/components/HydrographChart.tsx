@@ -1,6 +1,6 @@
 // components/HydrographChart.tsx
 import { Line, getElementAtEvent, getDatasetAtEvent } from 'react-chartjs-2';
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Chart as ChartJS } from 'chart.js';
 
 interface HydrographDataPoint {
@@ -189,6 +189,7 @@ export default function HydrographChart({ data, csvData, showObservations = fals
         labels: {
           usePointStyle: true,
           padding: 20,
+          color: getComputedStyle(document.documentElement).getPropertyValue('--text-color') || '#374151',
         }
       },
       title: {
@@ -199,9 +200,15 @@ export default function HydrographChart({ data, csvData, showObservations = fals
         font: {
           size: 16,
           weight: 'bold' as const,
-        }
+        },
+        color: getComputedStyle(document.documentElement).getPropertyValue('--text-color') || '#374151',
       },
       tooltip: {
+        backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--dropdown-bg') || '#fff',
+        titleColor: getComputedStyle(document.documentElement).getPropertyValue('--text-color') || '#374151',
+        bodyColor: getComputedStyle(document.documentElement).getPropertyValue('--text-color') || '#374151',
+        borderColor: getComputedStyle(document.documentElement).getPropertyValue('--border-color') || '#e5e7eb',
+        borderWidth: 1,
         callbacks: {
           title: (context: any) => {
             return `Time: ${context[0].label}`;
@@ -220,11 +227,16 @@ export default function HydrographChart({ data, csvData, showObservations = fals
           text: showObservations && csvData ? 'Time' : 'Time (hours)',
           font: {
             weight: 'bold' as const,
-          }
+          },
+          color: getComputedStyle(document.documentElement).getPropertyValue('--text-color') || '#374151',
         },
         ticks: {
           maxTicksLimit: 12,
           autoSkip: true,
+          color: getComputedStyle(document.documentElement).getPropertyValue('--text-color') || '#374151',
+        },
+        grid: {
+          color: getComputedStyle(document.documentElement).getPropertyValue('--border-color') || '#e5e7eb',
         }
       },
       y: {
@@ -234,19 +246,50 @@ export default function HydrographChart({ data, csvData, showObservations = fals
           text: 'Flow Rate (m³/s)',
           font: {
             weight: 'bold' as const,
-          }
+          },
+          color: getComputedStyle(document.documentElement).getPropertyValue('--text-color') || '#374151',
         },
         beginAtZero: true,
+        ticks: {
+          color: getComputedStyle(document.documentElement).getPropertyValue('--text-color') || '#374151',
+        },
         grid: {
-          color: 'rgba(0, 0, 0, 0.1)',
+          color: getComputedStyle(document.documentElement).getPropertyValue('--border-color') || '#e5e7eb',
         }
       }
     },
+    layout: {
+      padding: {
+        top: 10,
+        right: 10,
+        bottom: 10,
+        left: 10
+      }
+    }
   };
 
   // Chart reference for downloading
   const chartRef = useRef<ChartJS<'line'>>(null);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [themeKey, setThemeKey] = useState(0); // Force re-render on theme change
+
+  // Listen for theme changes
+  useEffect(() => {
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'data-theme') {
+          setThemeKey(prev => prev + 1); // Force re-render
+        }
+      });
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme']
+    });
+
+    return () => observer.disconnect();
+  }, []);
 
   // Function to download chart as PNG
   const downloadChart = () => {
@@ -297,6 +340,11 @@ export default function HydrographChart({ data, csvData, showObservations = fals
               opacity: 1;
               transform: translateY(0) scale(1);
             }
+          }
+          
+          .hydrograph-chart-container canvas {
+            background-color: var(--card-background, #ffffff) !important;
+            border-radius: 8px;
           }
         `}
       </style>
@@ -557,7 +605,7 @@ export default function HydrographChart({ data, csvData, showObservations = fals
         )}
       </div>
       
-      <Line ref={chartRef} data={chartData} options={options} />
+      <Line key={themeKey} ref={chartRef} data={chartData} options={options} />
       
       {/* Comparison Statistics */}
       {comparisonStats && showObservations && (
