@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import PrecipitationForm from './components/PrecipitationForm';
 import AdvancedHydrologyForm from './components/AdvancedHydrologyForm';
+import CsvHydrographLoader from './components/CsvHydrographLoader';
 import HydrographChart from './components/HydrographChart';
 import AdvancedResultsDisplay from './components/AdvancedResultsDisplay';
 import { ThemeToggle } from './components/ThemeToggle';
@@ -34,6 +35,15 @@ interface AdvancedHydrologicalParameters {
   baseFlowCubicMetersPerSecond: number;
 }
 
+interface CsvDataPoint {
+  year: number;
+  month: number;
+  day: number;
+  hour: number;
+  flowCubicMetersPerSecond: number;
+  timeHours: number;
+}
+
 // Helper function to convert model string to enum value
 const getModelEnumValue = (modelString: string): number => {
   switch (modelString) {
@@ -48,8 +58,9 @@ const getModelEnumValue = (modelString: string): number => {
 function App() {
   const [hydrographData, setHydrographData] = useState<any[]>([]);
   const [advancedResult, setAdvancedResult] = useState<any>(null);
+  const [csvData, setCsvData] = useState<CsvDataPoint[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [activeMode, setActiveMode] = useState<'simple' | 'advanced'>('simple');
+  const [activeMode, setActiveMode] = useState<'simple' | 'advanced' | 'csv'>('simple');
   
   const handleCalculate = async (params: HydrologicalParameters) => {
     setIsLoading(true);
@@ -155,6 +166,33 @@ function App() {
     }
   };
 
+  const handleCsvDataLoaded = (data: CsvDataPoint[]) => {
+    // Clear other results
+    setHydrographData([]);
+    setAdvancedResult(null);
+    
+    // Convert CSV data to chart format
+    const chartData = data.map(point => ({
+      timeHours: point.timeHours,
+      flowCubicMetersPerSecond: point.flowCubicMetersPerSecond
+    }));
+    
+    setCsvData(data);
+    setHydrographData(chartData);
+    
+    // Scroll to chart section after data is loaded
+    setTimeout(() => {
+      const chartSection = document.getElementById('chart-section');
+      if (chartSection) {
+        chartSection.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'start',
+          inline: 'nearest'
+        });
+      }
+    }, 200);
+  };
+
   return (
     <div className="app">
       <ThemeToggle />
@@ -174,6 +212,7 @@ function App() {
                 setActiveMode('simple');
                 setHydrographData([]);
                 setAdvancedResult(null);
+                setCsvData([]);
               }}
             >
               Simple Model
@@ -184,9 +223,21 @@ function App() {
                 setActiveMode('advanced');
                 setHydrographData([]);
                 setAdvancedResult(null);
+                setCsvData([]);
               }}
             >
               Advanced Models
+            </button>
+            <button 
+              className={`mode-button ${activeMode === 'csv' ? 'active' : ''}`}
+              onClick={() => {
+                setActiveMode('csv');
+                setHydrographData([]);
+                setAdvancedResult(null);
+                setCsvData([]);
+              }}
+            >
+              Load CSV Data
             </button>
           </div>
         </header>
@@ -195,8 +246,10 @@ function App() {
           <div className="form-section">
             {activeMode === 'simple' ? (
               <PrecipitationForm onCalculate={handleCalculate} />
-            ) : (
+            ) : activeMode === 'advanced' ? (
               <AdvancedHydrologyForm onCalculate={handleAdvancedCalculate} isLoading={isLoading} />
+            ) : (
+              <CsvHydrographLoader onDataLoaded={handleCsvDataLoaded} isLoading={isLoading} />
             )}
           </div>
           
@@ -206,7 +259,9 @@ function App() {
               <p className="loading-text">
                 {activeMode === 'simple' 
                   ? 'Calculating hydrograph...' 
-                  : 'Running advanced hydrological simulation...'
+                  : activeMode === 'advanced'
+                  ? 'Running advanced hydrological simulation...'
+                  : 'Processing CSV data...'
                 }
               </p>
             </div>
@@ -217,6 +272,29 @@ function App() {
             <div className="chart-section" id="chart-section" key={hydrographData.length}>
               <div className="chart-container">
                 <h2 className="chart-title">Generated Hydrograph</h2>
+                <HydrographChart data={hydrographData} />
+              </div>
+            </div>
+          )}
+          
+          {/* CSV Data Results */}
+          {hydrographData.length > 0 && activeMode === 'csv' && (
+            <div className="chart-section" id="chart-section" key={`csv-${hydrographData.length}`}>
+              <div className="chart-container">
+                <h2 className="chart-title">Loaded Hydrograph from CSV</h2>
+                <div className="csv-data-info">
+                  <div className="data-summary">
+                    <span className="summary-item">
+                      <strong>Total Points:</strong> {csvData.length}
+                    </span>
+                    <span className="summary-item">
+                      <strong>Duration:</strong> {Math.round(Math.max(...csvData.map(d => d.timeHours)))} hours
+                    </span>
+                    <span className="summary-item">
+                      <strong>Peak Flow:</strong> {Math.max(...csvData.map(d => d.flowCubicMetersPerSecond)).toFixed(2)} m³/s
+                    </span>
+                  </div>
+                </div>
                 <HydrographChart data={hydrographData} />
               </div>
             </div>
