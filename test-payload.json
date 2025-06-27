@@ -1,0 +1,16 @@
+{
+  "IntensityMmPerHour": 10.0,
+  "DurationHours": 2,
+  "CatchmentAreaKm2": 5.0,
+  "WatershedSlopePercent": 2.0,
+  "WatershedLengthKm": 5.0,
+  "CurveNumber": 70,
+  "AntecedentMoisture": 2,
+  "LinearReservoirConstantK": 5.0,
+  "InitialStorageCubicMeters": 0.0,
+  "NumberOfReservoirs": 3,
+  "TimeStepHours": 1.0,
+  "SelectedModel": 0,
+  "EvapotranspirationMmPerHour": 0.0,
+  "BaseFlowCubicMetersPerSecond": 0.0
+}

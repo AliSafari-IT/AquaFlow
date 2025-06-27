@@ -4,13 +4,19 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 builder.Services.AddScoped<IHydrologyService, BasicHydrologyService>();
+builder.Services.AddScoped<IAdvancedHydrologyService, AdvancedHydrologyService>();
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
         policy.WithOrigins("http://localhost:3000")
         .AllowAnyHeader().AllowAnyMethod());
 });
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+        options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
+    });
 
 // Add Swagger/OpenAPI support
 builder.Services.AddEndpointsApiExplorer();

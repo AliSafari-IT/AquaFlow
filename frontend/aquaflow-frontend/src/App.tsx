@@ -1,7 +1,9 @@
 // App.tsx
 import React, { useState } from 'react';
 import PrecipitationForm from './components/PrecipitationForm';
+import AdvancedHydrologyForm from './components/AdvancedHydrologyForm';
 import HydrographChart from './components/HydrographChart';
+import AdvancedResultsDisplay from './components/AdvancedResultsDisplay';
 import { ThemeToggle } from './components/ThemeToggle';
 import './App.css';
 
@@ -15,12 +17,43 @@ interface HydrologicalParameters {
   initialStorageCubicMeters: number;
 }
 
+interface AdvancedHydrologicalParameters {
+  intensityMmPerHour: number;
+  durationHours: number;
+  catchmentAreaKm2: number;
+  watershedSlopePercent: number;
+  watershedLengthKm: number;
+  curveNumber: number;
+  antecedentMoisture: number;
+  linearReservoirConstantK: number;
+  initialStorageCubicMeters: number;
+  numberOfReservoirs: number;
+  timeStepHours: number;
+  selectedModel: string;
+  evapotranspirationMmPerHour: number;
+  baseFlowCubicMetersPerSecond: number;
+}
+
+// Helper function to convert model string to enum value
+const getModelEnumValue = (modelString: string): number => {
+  switch (modelString) {
+    case 'SimpleLinearReservoir': return 0;
+    case 'CurveNumberMethod': return 1;
+    case 'LinearReservoirChain': return 2;
+    case 'CombinedModel': return 3;
+    default: return 0; // Default to SimpleLinearReservoir
+  }
+};
+
 function App() {
   const [hydrographData, setHydrographData] = useState<any[]>([]);
+  const [advancedResult, setAdvancedResult] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [activeMode, setActiveMode] = useState<'simple' | 'advanced'>('simple');
   
   const handleCalculate = async (params: HydrologicalParameters) => {
     setIsLoading(true);
+    setAdvancedResult(null); // Clear advanced results
     try {
       const requestBody = {
         intensityMmPerHour: params.intensity,
@@ -67,6 +100,61 @@ function App() {
     }
   };
 
+  const handleAdvancedCalculate = async (params: AdvancedHydrologicalParameters) => {
+    setIsLoading(true);
+    setHydrographData([]); // Clear simple results
+    try {
+      // Convert camelCase to PascalCase for C# backend
+      const backendParams = {
+        IntensityMmPerHour: params.intensityMmPerHour,
+        DurationHours: params.durationHours,
+        CatchmentAreaKm2: params.catchmentAreaKm2,
+        WatershedSlopePercent: params.watershedSlopePercent,
+        WatershedLengthKm: params.watershedLengthKm,
+        CurveNumber: params.curveNumber,
+        AntecedentMoisture: params.antecedentMoisture,
+        LinearReservoirConstantK: params.linearReservoirConstantK,
+        InitialStorageCubicMeters: params.initialStorageCubicMeters,
+        NumberOfReservoirs: params.numberOfReservoirs,
+        TimeStepHours: params.timeStepHours,
+        SelectedModel: getModelEnumValue(params.selectedModel),
+        EvapotranspirationMmPerHour: params.evapotranspirationMmPerHour,
+        BaseFlowCubicMetersPerSecond: params.baseFlowCubicMetersPerSecond
+      };
+      
+      const res = await fetch('http://localhost:5185/api/hydrology/calculate-advanced', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(backendParams),
+      });
+      
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+      
+      const data = await res.json();
+      setTimeout(() => {
+        setAdvancedResult(data);
+        // Scroll to results section
+        setTimeout(() => {
+          const resultsSection = document.getElementById('results-section');
+          if (resultsSection) {
+            resultsSection.scrollIntoView({ 
+              behavior: 'smooth', 
+              block: 'start',
+              inline: 'nearest'
+            });
+          }
+        }, 200);
+      }, 100);
+    } catch (error) {
+      console.error('Error calculating advanced hydrograph:', error);
+      alert('Failed to calculate advanced hydrograph. Make sure the backend server is running on http://localhost:5185');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="app">
       <ThemeToggle />
@@ -77,26 +165,67 @@ function App() {
           <p className="app-description">
             Advanced hydrological modeling and simulation platform
           </p>
+          
+          {/* Mode Toggle */}
+          <div className="mode-toggle">
+            <button 
+              className={`mode-button ${activeMode === 'simple' ? 'active' : ''}`}
+              onClick={() => {
+                setActiveMode('simple');
+                setHydrographData([]);
+                setAdvancedResult(null);
+              }}
+            >
+              Simple Model
+            </button>
+            <button 
+              className={`mode-button ${activeMode === 'advanced' ? 'active' : ''}`}
+              onClick={() => {
+                setActiveMode('advanced');
+                setHydrographData([]);
+                setAdvancedResult(null);
+              }}
+            >
+              Advanced Models
+            </button>
+          </div>
         </header>
 
         <main className="app-main">
           <div className="form-section">
-            <PrecipitationForm onCalculate={handleCalculate} />
+            {activeMode === 'simple' ? (
+              <PrecipitationForm onCalculate={handleCalculate} />
+            ) : (
+              <AdvancedHydrologyForm onCalculate={handleAdvancedCalculate} isLoading={isLoading} />
+            )}
           </div>
           
           {isLoading && (
             <div className="loading-section">
               <div className="loading-spinner"></div>
-              <p className="loading-text">Calculating hydrograph...</p>
+              <p className="loading-text">
+                {activeMode === 'simple' 
+                  ? 'Calculating hydrograph...' 
+                  : 'Running advanced hydrological simulation...'
+                }
+              </p>
             </div>
           )}
           
-          {hydrographData.length > 0 && (
+          {/* Simple Model Results */}
+          {hydrographData.length > 0 && activeMode === 'simple' && (
             <div className="chart-section" id="chart-section" key={hydrographData.length}>
               <div className="chart-container">
                 <h2 className="chart-title">Generated Hydrograph</h2>
                 <HydrographChart data={hydrographData} />
               </div>
+            </div>
+          )}
+          
+          {/* Advanced Model Results */}
+          {advancedResult && activeMode === 'advanced' && (
+            <div className="results-section" id="results-section" key={JSON.stringify(advancedResult)}>
+              <AdvancedResultsDisplay result={advancedResult} />
             </div>
           )}
         </main>
