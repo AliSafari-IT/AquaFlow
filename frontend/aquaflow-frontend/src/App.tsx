@@ -1,6 +1,6 @@
 // App.tsx
 import React, { useState } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import PrecipitationForm from "./components/PrecipitationForm";
 import AdvancedHydrologyForm from "./components/AdvancedHydrologyForm";
 import CsvHydrographLoader from "./components/CsvHydrographLoader";
@@ -386,18 +386,27 @@ const HomePage: React.FC = () => {
               with hydrological simulations.
             </p>
             <div className="feature-grid">
-              <div className="feature-item">
-                <h3>🌧️ Simple Model</h3>
-                <p>Basic rainfall-runoff modeling with linear reservoir approach</p>
-              </div>
-              <div className="feature-item">
-                <h3>🏔️ Advanced Models</h3>
-                <p>Comprehensive watershed modeling with multiple algorithms</p>
-              </div>
-              <div className="feature-item">
-                <h3>📊 CSV Analysis</h3>
-                <p>Load and visualize hydrograph data from CSV files</p>
-              </div>
+              <Link to="/models/simple-linear-reservoir" className="feature-item-link">
+                <div className="feature-item">
+                  <h3>🌧️ Simple Model</h3>
+                  <p>Basic rainfall-runoff modeling with linear reservoir approach</p>
+                  <div className="learn-more">Learn more →</div>
+                </div>
+              </Link>
+              <Link to="/models/scs-curve-number" className="feature-item-link">
+                <div className="feature-item">
+                  <h3>🏔️ Advanced Models</h3>
+                  <p>Comprehensive watershed modeling with multiple algorithms</p>
+                  <div className="learn-more">Learn more →</div>
+                </div>
+              </Link>
+              <Link to="/models/green-ampt-infiltration" className="feature-item-link">
+                <div className="feature-item">
+                  <h3>📊 Infiltration Analysis</h3>
+                  <p>Physics-based modeling of soil infiltration processes</p>
+                  <div className="learn-more">Learn more →</div>
+                </div>
+              </Link>
             </div>
           </div>
         </div>

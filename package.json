@@ -1,16 +1,18 @@
 {
   "name": "aquaflow-workspace",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "workspaces": [
     "frontend/aquaflow-frontend"
   ],
   "scripts": {
     "ui": "pnpm --filter aquaflow-frontend start",
-    "build:frontend": "pnpm --filter aquaflow-frontend build",
-    "test:frontend": "pnpm --filter aquaflow-frontend test",
+    "ui:build": "pnpm --filter aquaflow-frontend build",
+    "ui:test": "pnpm --filter aquaflow-frontend test",
     "api": "cd backend/AquaFlow.Backend && dotnet run",
-    "build:backend": "cd backend/AquaFlow.Backend && dotnet build"
+    "api:build": "cd backend/AquaFlow.Backend && dotnet build",
+    "api:test": "cd backend/AquaFlow.Backend && dotnet test",
+    "api:watch": "cd backend/AquaFlow.Backend && dotnet watch run"
   },
   "pnpm": {
     "overrides": {
