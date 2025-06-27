@@ -21,6 +21,7 @@ interface HydrographChartProps {
   data: HydrographDataPoint[];
   csvData?: CSVDataPoint[];
   showObservations?: boolean;
+  modelName?: string;
 }
 
 interface ComparisonStats {
@@ -105,7 +106,7 @@ function calculateComparisonStats(modeledData: HydrographDataPoint[], observedDa
   };
 }
 
-export default function HydrographChart({ data, csvData, showObservations = false }: HydrographChartProps) {
+export default function HydrographChart({ data, csvData, showObservations = false, modelName }: HydrographChartProps) {
   const csvChartData = showObservations && csvData ? csvData : null;
 
   // Calculate comparison statistics if both datasets are available
@@ -193,8 +194,8 @@ export default function HydrographChart({ data, csvData, showObservations = fals
       title: {
         display: true,
         text: showObservations && csvData ? 
-          'Hydrograph Comparison - Modeled vs Observed Flow' : 
-          'Hydrograph - Flow Rate Over Time',
+          `Hydrograph Comparison - Modeled vs Observed Flow${modelName ? ` (${modelName})` : ''}` : 
+          `Hydrograph - Flow Rate Over Time${modelName ? ` (${modelName})` : ''}`,
         font: {
           size: 16,
           weight: 'bold' as const,
@@ -245,6 +246,7 @@ export default function HydrographChart({ data, csvData, showObservations = fals
 
   // Chart reference for downloading
   const chartRef = useRef<ChartJS<'line'>>(null);
+  const [showDropdown, setShowDropdown] = useState(false);
 
   // Function to download chart as PNG
   const downloadChart = () => {
@@ -255,6 +257,7 @@ export default function HydrographChart({ data, csvData, showObservations = fals
       link.href = canvas.toDataURL('image/png');
       link.click();
     }
+    setShowDropdown(false);
   };
 
   // Function to download hydrograph data as CSV
@@ -277,100 +280,281 @@ export default function HydrographChart({ data, csvData, showObservations = fals
     link.download = 'hydrograph_data.csv';
     link.click();
     URL.revokeObjectURL(link.href);
+    setShowDropdown(false);
   };
 
   return (
     <div className="hydrograph-chart-container" style={{ position: 'relative' }}>
-      {/* Download Buttons */}
+      {/* Add CSS for dropdown animation */}
+      <style>
+        {`
+          @keyframes dropdownFadeIn {
+            from {
+              opacity: 0;
+              transform: translateY(-8px) scale(0.95);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0) scale(1);
+            }
+          }
+        `}
+      </style>
+      
+      {/* Download Button with Dropdown */}
       <div style={{
         position: 'absolute',
         top: '8px',
         right: '8px',
         zIndex: 10,
         display: 'flex',
-        gap: '4px'
+        flexDirection: 'column',
+        gap: '8px',
+        alignItems: 'flex-end'
       }}>
-        {/* Save PNG Button */}
-        <button
-          onClick={downloadChart}
-          style={{
-            background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
-            color: 'white',
-            border: '1px solid rgba(255,255,255,0.3)',
+        {/* Model Name Badge */}
+        {modelName && (
+          <div style={{
+            background: 'var(--card-background, #fff)',
+            color: 'var(--primary-color, #059669)',
+            border: '1px solid var(--border-color, #e5e7eb)',
             borderRadius: '6px',
-            padding: '6px 8px',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '4px',
-            fontSize: '12px',
+            padding: '4px 8px',
+            fontSize: '11px',
             fontWeight: '500',
-            boxShadow: '0 2px 8px rgba(59, 130, 246, 0.3)',
-            transition: 'all 0.2s ease',
             backdropFilter: 'blur(8px)',
             WebkitBackdropFilter: 'blur(8px)',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.transform = 'translateY(-1px)';
-            e.currentTarget.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.4)';
-            e.currentTarget.style.background = 'linear-gradient(135deg, #2563eb, #1e40af)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.transform = 'translateY(0)';
-            e.currentTarget.style.boxShadow = '0 2px 8px rgba(59, 130, 246, 0.3)';
-            e.currentTarget.style.background = 'linear-gradient(135deg, #3b82f6, #1d4ed8)';
-          }}
-          title="Download chart as PNG"
-        >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-            <polyline points="7,10 12,15 17,10"/>
-            <line x1="12" y1="15" x2="12" y2="3"/>
-          </svg>
-          PNG
-        </button>
+            whiteSpace: 'nowrap',
+            boxShadow: '0 2px 8px var(--shadow-color, rgba(0, 0, 0, 0.1))',
+          }}>
+            <svg 
+              width="12" 
+              height="12" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="currentColor" 
+              strokeWidth="2"
+              style={{ marginRight: '4px', verticalAlign: 'middle' }}
+            >
+              <path d="M9 11H5a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h4"/>
+              <path d="M20 16V7a2 2 0 0 0-2-2H9"/>
+              <path d="M22 22l-5-10-5 10"/>
+              <path d="M14 18h.01"/>
+            </svg>
+            {modelName}
+          </div>
+        )}
 
-        {/* Save CSV Button */}
-        <button
-          onClick={downloadCSV}
-          style={{
-            background: 'linear-gradient(135deg, #10b981, #059669)',
-            color: 'white',
-            border: '1px solid rgba(255,255,255,0.3)',
-            borderRadius: '6px',
-            padding: '6px 8px',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '4px',
-            fontSize: '12px',
-            fontWeight: '500',
-            boxShadow: '0 2px 8px rgba(16, 185, 129, 0.3)',
-            transition: 'all 0.2s ease',
-            backdropFilter: 'blur(8px)',
-            WebkitBackdropFilter: 'blur(8px)',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.transform = 'translateY(-1px)';
-            e.currentTarget.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.4)';
-            e.currentTarget.style.background = 'linear-gradient(135deg, #059669, #047857)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.transform = 'translateY(0)';
-            e.currentTarget.style.boxShadow = '0 2px 8px rgba(16, 185, 129, 0.3)';
-            e.currentTarget.style.background = 'linear-gradient(135deg, #10b981, #059669)';
-          }}
-          title="Download hydrograph data as CSV"
-        >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-            <polyline points="14,2 14,8 20,8"/>
-            <line x1="16" y1="13" x2="8" y2="13"/>
-            <line x1="16" y1="17" x2="8" y2="17"/>
-            <polyline points="10,9 9,9 8,9"/>
-          </svg>
-          CSV
-        </button>
+        <div style={{ position: 'relative' }}>
+          {/* Main Download Button */}
+          <button
+            onClick={() => setShowDropdown(!showDropdown)}
+            style={{
+              background: showDropdown 
+                ? 'var(--button-hover-bg, #374151)' 
+                : 'var(--button-bg, #1f2937)',
+              color: 'var(--button-text, #f9fafb)',
+              border: '1px solid var(--button-border, #4b5563)',
+              borderRadius: '8px',
+              padding: '8px 12px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              fontSize: '13px',
+              fontWeight: '500',
+              boxShadow: showDropdown 
+                ? '0 8px 25px var(--shadow-color, rgba(0, 0, 0, 0.3)), 0 0 0 1px var(--button-border, #4b5563)' 
+                : '0 4px 15px var(--shadow-color, rgba(0, 0, 0, 0.25)), 0 2px 8px var(--shadow-color, rgba(0, 0, 0, 0.15))',
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              backdropFilter: 'blur(12px)',
+              WebkitBackdropFilter: 'blur(12px)',
+              minWidth: '110px',
+              justifyContent: 'space-between',
+            }}
+            onMouseEnter={(e) => {
+              if (!showDropdown) {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 8px 25px var(--shadow-color, rgba(0, 0, 0, 0.35)), 0 4px 12px var(--shadow-color, rgba(0, 0, 0, 0.2))';
+                e.currentTarget.style.background = 'var(--button-hover-bg, #374151)';
+                e.currentTarget.style.borderColor = 'var(--button-border-hover, #6b7280)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!showDropdown) {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 4px 15px var(--shadow-color, rgba(0, 0, 0, 0.25)), 0 2px 8px var(--shadow-color, rgba(0, 0, 0, 0.15))';
+                e.currentTarget.style.background = 'var(--button-bg, #1f2937)';
+                e.currentTarget.style.borderColor = 'var(--button-border, #4b5563)';
+              }
+            }}
+            title="Download options"
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="7,10 12,15 17,10"/>
+                <line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+              <span>Download</span>
+            </div>
+            <svg 
+              width="12" 
+              height="12" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="currentColor" 
+              strokeWidth="2.5"
+              style={{ 
+                transform: showDropdown ? 'rotate(180deg)' : 'rotate(0deg)',
+                transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                opacity: 0.7
+              }}
+            >
+              <polyline points="6,9 12,15 18,9"/>
+            </svg>
+          </button>
+
+          {/* Dropdown Menu */}
+          {showDropdown && (
+            <div style={{
+              position: 'absolute',
+              top: '100%',
+              right: '0',
+              marginTop: '8px',
+              background: 'var(--dropdown-bg, #fff)',
+              border: '1px solid var(--dropdown-border, #e5e7eb)',
+              borderRadius: '12px',
+              boxShadow: '0 20px 40px var(--shadow-color, rgba(0, 0, 0, 0.1)), 0 8px 16px var(--shadow-color, rgba(0, 0, 0, 0.08)), 0 0 0 1px var(--dropdown-border, #e5e7eb)',
+              overflow: 'hidden',
+              minWidth: '160px',
+              zIndex: 20,
+              backdropFilter: 'blur(16px)',
+              WebkitBackdropFilter: 'blur(16px)',
+              animation: 'dropdownFadeIn 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+            }}>
+              {/* PNG Option */}
+              <button
+                onClick={downloadChart}
+                style={{
+                  width: '100%',
+                  padding: '12px 16px',
+                  backgroundColor: 'transparent',
+                  border: 'none',
+                  color: 'var(--text-color, #374151)',
+                  fontSize: '13px',
+                  fontWeight: '500',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  textAlign: 'left',
+                  transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                  borderBottom: '1px solid var(--border-color, #e5e7eb)',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--hover-bg, #f3f4f6)';
+                  e.currentTarget.style.color = 'var(--primary-color, #059669)';
+                  e.currentTarget.style.paddingLeft = '20px';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.style.color = 'var(--text-color, #374151)';
+                  e.currentTarget.style.paddingLeft = '16px';
+                }}
+              >
+                <div style={{
+                  width: '20px',
+                  height: '20px',
+                  borderRadius: '4px',
+                  background: 'var(--icon-bg, #f0f9ff)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0
+                }}>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                    <polyline points="21,15 16,10 5,21"/>
+                  </svg>
+                </div>
+                <div>
+                  <div style={{ lineHeight: '1.2' }}>Download PNG</div>
+                  <div style={{ fontSize: '11px', opacity: 0.6, marginTop: '1px' }}>Chart as image</div>
+                </div>
+              </button>
+
+              {/* CSV Option */}
+              <button
+                onClick={downloadCSV}
+                style={{
+                  width: '100%',
+                  padding: '12px 16px',
+                  backgroundColor: 'transparent',
+                  border: 'none',
+                  color: 'var(--text-color, #374151)',
+                  fontSize: '13px',
+                  fontWeight: '500',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  textAlign: 'left',
+                  transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--hover-bg, #f3f4f6)';
+                  e.currentTarget.style.color = 'var(--primary-color, #059669)';
+                  e.currentTarget.style.paddingLeft = '20px';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.style.color = 'var(--text-color, #374151)';
+                  e.currentTarget.style.paddingLeft = '16px';
+                }}
+              >
+                <div style={{
+                  width: '20px',
+                  height: '20px',
+                  borderRadius: '4px',
+                  background: 'var(--icon-bg, #f0f9ff)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0
+                }}>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14,2 14,8 20,8"/>
+                    <line x1="16" y1="13" x2="8" y2="13"/>
+                    <line x1="16" y1="17" x2="8" y2="17"/>
+                    <polyline points="10,9 9,9 8,9"/>
+                  </svg>
+                </div>
+                <div>
+                  <div style={{ lineHeight: '1.2' }}>Download CSV</div>
+                  <div style={{ fontSize: '11px', opacity: 0.6, marginTop: '1px' }}>Raw data export</div>
+                </div>
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Click outside to close dropdown */}
+        {showDropdown && (
+          <div
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              zIndex: 15,
+            }}
+            onClick={() => setShowDropdown(false)}
+          />
+        )}
       </div>
       
       <Line ref={chartRef} data={chartData} options={options} />

@@ -179,6 +179,7 @@ export default function AdvancedResultsDisplay({ result, csvData, showObservatio
             data={hydrographPoints} 
             csvData={csvData} 
             showObservations={showObservations && csvData && csvData.length > 0}
+            modelName={result.modelSummary.modelName}
           />
         </div>
       </div>

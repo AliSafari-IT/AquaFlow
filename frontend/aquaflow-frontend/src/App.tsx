@@ -150,6 +150,7 @@ const SimpleModelPage: React.FC<{ csvData: CsvDataPoint[] }> = ({ csvData }) => 
                 data={hydrographData}
                 csvData={csvData}
                 showObservations={csvData.length > 0}
+                modelName="Simple Linear Reservoir"
               />
             </div>
           </div>
@@ -356,6 +357,7 @@ const CsvDataPage: React.FC<{
                 data={hydrographData}
                 csvData={csvData}
                 showObservations={csvData.length > 0}
+                modelName="Simple Linear Reservoir"
               />
             </div>
           </div>
