@@ -1,6 +1,7 @@
 // components/HydrographChart.tsx
-import { Line } from 'react-chartjs-2';
-import React from 'react';
+import { Line, getElementAtEvent, getDatasetAtEvent } from 'react-chartjs-2';
+import React, { useRef } from 'react';
+import { Chart as ChartJS } from 'chart.js';
 
 interface HydrographDataPoint {
   timeHours: number;
@@ -242,9 +243,67 @@ export default function HydrographChart({ data, csvData, showObservations = fals
     },
   };
 
+  // Chart reference for downloading
+  const chartRef = useRef<ChartJS<'line'>>(null);
+
+  // Function to download chart as PNG
+  const downloadChart = () => {
+    if (chartRef.current) {
+      const canvas = chartRef.current.canvas;
+      const link = document.createElement('a');
+      link.download = 'hydrograph.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+  };
+
   return (
-    <div className="hydrograph-chart-container">
-      <Line data={chartData} options={options} />
+    <div className="hydrograph-chart-container" style={{ position: 'relative' }}>
+      {/* Save Button */}
+      <button
+        onClick={downloadChart}
+        style={{
+          position: 'absolute',
+          top: '10px',
+          right: '10px',
+          zIndex: 10,
+          background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+          color: 'white',
+          border: '1px solid rgba(255,255,255,0.3)',
+          borderRadius: '8px',
+          padding: '8px 12px',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '6px',
+          fontSize: '14px',
+          fontWeight: '600',
+          boxShadow: '0 4px 12px rgba(59, 130, 246, 0.4), 0 2px 4px rgba(0,0,0,0.1)',
+          transition: 'all 0.2s ease',
+          backdropFilter: 'blur(8px)',
+          WebkitBackdropFilter: 'blur(8px)',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = 'translateY(-2px)';
+          e.currentTarget.style.boxShadow = '0 6px 16px rgba(59, 130, 246, 0.5), 0 4px 8px rgba(0,0,0,0.15)';
+          e.currentTarget.style.background = 'linear-gradient(135deg, #2563eb, #1e40af)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = 'translateY(0)';
+          e.currentTarget.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.4), 0 2px 4px rgba(0,0,0,0.1)';
+          e.currentTarget.style.background = 'linear-gradient(135deg, #3b82f6, #1d4ed8)';
+        }}
+        title="Download chart as PNG"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7,10 12,15 17,10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        Save PNG
+      </button>
+      
+      <Line ref={chartRef} data={chartData} options={options} />
       
       {/* Comparison Statistics */}
       {comparisonStats && showObservations && (
