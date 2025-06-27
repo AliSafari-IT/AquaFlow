@@ -1,5 +1,5 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React from "react";
+import { Link, useLocation } from "react-router-dom";
 import DDMenu, { MenuItem } from "@asafarim/dd-menu";
 import "@asafarim/dd-menu/dist/index.css";
 import "@asafarim/react-themes/styles.css";
@@ -7,6 +7,7 @@ import "@asafarim/react-themes/styles.css";
 import { ThemeToggle } from "./ThemeToggle";
 import "./TopNavBar.css";
 import "./DDMenuFix.css";
+import { ThemeSelector, useTheme } from "@asafarim/react-themes";
 
 interface TopNavBarProps {}
 
@@ -26,30 +27,45 @@ interface HelpMenuItem {
 
 export default function TopNavBar({}: TopNavBarProps) {
   const location = useLocation();
-  
+  const { mode } = useTheme();
   const getCurrentPage = () => {
     const path = location.pathname;
-    if (path === '/help') return 'help';
-    if (path === '/about') return 'about';
-    if (path === '/simple') return 'simple';
-    if (path === '/advanced') return 'advanced';
-    if (path === '/csv') return 'csv';
-    return 'simple';
+    if (path === "/help") return "help";
+    if (path === "/about") return "about";
+    if (path === "/simple") return "simple";
+    if (path === "/advanced") return "advanced";
+    if (path === "/csv") return "csv";
+    return "simple";
   };
 
   const currentPage = getCurrentPage();
 
   const navigationItems: NavigationItem[] = [
-    { id: 'simple', label: 'Simple Model', icon: '🌊', path: '/simple' },
-    { id: 'advanced', label: 'Advanced Models', icon: '⚙️', path: '/advanced' },
-    { id: 'csv', label: 'Load CSV Data', icon: '📊', path: '/csv' },
+    { id: "simple", label: "Simple Model", icon: "🌊", path: "/simple" },
+    { id: "advanced", label: "Advanced Models", icon: "⚙️", path: "/advanced" },
+    { id: "csv", label: "Load CSV Data", icon: "📊", path: "/csv" },
   ];
 
   const helpMenuItems: HelpMenuItem[] = [
-    { id: 'docs', text: 'Model Documentation', label: 'Model Documentation', link: '/help#documentation' },
-    { id: 'guide', text: 'User Guide', label: 'User Guide', link: '/help#guide' },
-    { id: 'faq', text: 'FAQ', label: 'FAQ', link: '/help#faq' },
-    { id: 'about', text: 'About AquaFlow', label: 'About AquaFlow', link: '/about' },
+    {
+      id: "docs",
+      text: "Model Documentation",
+      label: "Model Documentation",
+      link: "/help#documentation",
+    },
+    {
+      id: "guide",
+      text: "User Guide",
+      label: "User Guide",
+      link: "/help#guide",
+    },
+    { id: "faq", text: "FAQ", label: "FAQ", link: "/help#faq" },
+    {
+      id: "about",
+      text: "About AquaFlow",
+      label: "About AquaFlow",
+      link: "/about",
+    },
   ];
 
   return (
@@ -84,15 +100,16 @@ export default function TopNavBar({}: TopNavBarProps) {
         <div className="help-menu">
           <DDMenu
             items={helpMenuItems}
-            trigger="?"
+            trigger="❓"
             size="md"
+            theme={mode}
             className="dd_menu dd_menu_trigger"
             onItemClick={(item) => {
               if (item.link) {
-                if (item.link.startsWith('/help')) {
+                if (item.link.startsWith("/help")) {
                   // Navigate to help page and handle hash scrolling
                   window.location.href = item.link;
-                } else if (item.link === '/about') {
+                } else if (item.link === "/about") {
                   // Navigate to about page
                   window.location.href = item.link;
                 }
@@ -102,7 +119,14 @@ export default function TopNavBar({}: TopNavBarProps) {
         </div>
 
         {/* Theme Toggle */}
-        <ThemeToggle />
+        <ThemeSelector
+          showLabels={true}
+          className="theme-selector"
+          options={[
+            { mode: "light", label: "Light", icon: "☀️" },
+            { mode: "dark", label: "Dark", icon: "🌙" },
+          ]}
+        />
       </div>
     </nav>
   );

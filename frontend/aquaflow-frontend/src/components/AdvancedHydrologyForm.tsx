@@ -115,8 +115,11 @@ export default function AdvancedHydrologyForm({ onCalculate, isLoading = false }
   return (
     <div className="advanced-hydrology-form-container">
       <div className="form-header">
-        <h2 className="form-title">Advanced Hydrological Modeling</h2>
-        <p className="form-subtitle">
+        <h2 className="form-title">
+          <span className="form-icon">⚙️</span>
+          Advanced Hydrological Modeling
+        </h2>
+        <p className="form-description">
           Professional-grade rainfall-runoff modeling with multiple methodologies
         </p>
       </div>
@@ -124,8 +127,11 @@ export default function AdvancedHydrologyForm({ onCalculate, isLoading = false }
       <form onSubmit={handleSubmit} className="advanced-hydrology-form">
         {/* Model Selection */}
         <section className="form-section">
-          <h3 className="form-section-header">Model Selection</h3>
-          <div className="model-selection">
+          <h3 className="form-section-header">
+            <span>🔧</span>
+            Model Selection
+          </h3>
+          <div className="input-group">
             <label className="form-label">
               <span>Runoff Model</span>
               <select 
@@ -148,7 +154,10 @@ export default function AdvancedHydrologyForm({ onCalculate, isLoading = false }
 
         {/* Precipitation Parameters */}
         <section className="form-section">
-          <h3 className="form-section-header">Precipitation Parameters</h3>
+          <h3 className="form-section-header">
+            <span>🌧️</span>
+            Precipitation Parameters
+          </h3>
           <div className="input-group">
             <label className="form-label">
               <span>Rainfall Intensity</span>
@@ -186,7 +195,10 @@ export default function AdvancedHydrologyForm({ onCalculate, isLoading = false }
 
         {/* Watershed Parameters */}
         <section className="form-section">
-          <h3 className="form-section-header">Watershed Characteristics</h3>
+          <h3 className="form-section-header">
+            <span>🏔️</span>
+            Watershed Characteristics
+          </h3>
           <div className="input-group">
             <label className="form-label">
               <span>Catchment Area</span>
@@ -247,6 +259,7 @@ export default function AdvancedHydrologyForm({ onCalculate, isLoading = false }
         {usesCurveNumber && (
           <section className="form-section">
             <h3 className="form-section-header">
+              <span>📊</span>
               SCS Curve Number Parameters
               <button 
                 type="button" 
@@ -339,7 +352,10 @@ export default function AdvancedHydrologyForm({ onCalculate, isLoading = false }
 
         {/* Routing Parameters */}
         <section className="form-section">
-          <h3 className="form-section-header">Flow Routing Parameters</h3>
+          <h3 className="form-section-header">
+            <span>🏛️</span>
+            Flow Routing Parameters
+          </h3>
           <div className="input-group">
             <label className="form-label">
               <span>Linear Reservoir Constant K</span>
@@ -402,7 +418,10 @@ export default function AdvancedHydrologyForm({ onCalculate, isLoading = false }
 
         {/* Advanced Parameters */}
         <section className="form-section">
-          <h3 className="form-section-header">Advanced Parameters</h3>
+          <h3 className="form-section-header">
+            <span>⚡</span>
+            Advanced Parameters
+          </h3>
           <div className="input-group">
             <label className="form-label">
               <span>Evapotranspiration Rate</span>
@@ -474,7 +493,10 @@ export default function AdvancedHydrologyForm({ onCalculate, isLoading = false }
               Calculating Advanced Model...
             </>
           ) : (
-            'Generate Advanced Hydrograph'
+            <>
+              <span>⚙️</span>
+              Generate Advanced Hydrograph
+            </>
           )}
         </button>
       </form>

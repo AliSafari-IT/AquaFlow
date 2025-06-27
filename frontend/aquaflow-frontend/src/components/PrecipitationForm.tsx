@@ -36,142 +36,174 @@ export default function PrecipitationForm({ onCalculate }: { onCalculate: (param
 
   return (
     <div className="hydrology-form-container">
-      <h2 className="form-title">Hydrological Parameters</h2>
+      <div className="form-header">
+        <h2 className="form-title">
+          <span className="form-icon">🌧️</span>
+          Simple Linear Reservoir Model
+        </h2>
+        <p className="form-description">
+          Configure watershed and precipitation parameters for rainfall-runoff simulation
+        </p>
+      </div>
       
       <form onSubmit={handleSubmit} className="hydrology-form">
-        {/* Precipitation Section */}
-        <section>
-          <h3 className="form-section-header">Precipitation Parameters</h3>
-          <div className="input-group">
-            <label className="form-label">
-              <span>Rainfall Intensity</span>
-              <div className="input-with-unit">
-                <input 
-                  className="form-input"
-                  type="number" 
-                  step="0.1"
-                  min="0"
-                  value={intensity} 
-                  onChange={e => setIntensity(+e.target.value)}
-                  required
-                />
-                <span className="input-unit">mm/hr</span>
-              </div>
-            </label>
-            
-            <label className="form-label">
-              <span>Storm Duration</span>
-              <div className="input-with-unit">
-                <input 
-                  className="form-input"
-                  type="number" 
-                  min="1"
-                  value={duration} 
-                  onChange={e => setDuration(+e.target.value)}
-                  required
-                />
-                <span className="input-unit">hours</span>
-              </div>
-            </label>
+        {/* Compact parameter grid */}
+        <div className="parameters-grid">
+          {/* Precipitation Parameters */}
+          <div className="parameter-group precipitation">
+            <h3 className="group-title">
+              <span className="group-icon">☔</span>
+              Precipitation
+            </h3>
+            <div className="parameter-row">
+              <label className="parameter-field">
+                <span className="field-label">Rainfall Intensity</span>
+                <div className="input-container">
+                  <input 
+                    className="field-input"
+                    type="number" 
+                    step="0.1"
+                    min="0"
+                    value={intensity} 
+                    onChange={e => setIntensity(+e.target.value)}
+                    required
+                  />
+                  <span className="field-unit">mm/hr</span>
+                </div>
+              </label>
+              
+              <label className="parameter-field">
+                <span className="field-label">Duration</span>
+                <div className="input-container">
+                  <input 
+                    className="field-input"
+                    type="number" 
+                    min="1"
+                    value={duration} 
+                    onChange={e => setDuration(+e.target.value)}
+                    required
+                  />
+                  <span className="field-unit">hours</span>
+                </div>
+              </label>
+            </div>
           </div>
-        </section>
 
-        {/* Catchment Section */}
-        <section>
-          <h3 className="form-section-header">Catchment Parameters</h3>
-          <div className="input-group">
-            <label className="form-label">
-              <span>Catchment Area</span>
-              <div className="input-with-unit">
-                <input 
-                  className="form-input"
-                  type="number" 
-                  step="0.1"
-                  min="0.1"
-                  value={catchmentAreaKm2} 
-                  onChange={e => setCatchmentAreaKm2(+e.target.value)}
-                  required
-                />
-                <span className="input-unit">km²</span>
-              </div>
-            </label>
-            
-            <label className="form-label">
-              <span>Runoff Coefficient</span>
-              <div className="input-with-unit">
-                <input 
-                  className="form-input"
-                  type="number" 
-                  step="0.01"
-                  min="0"
-                  max="1"
-                  value={runoffCoefficient} 
-                  onChange={e => setRunoffCoefficient(+e.target.value)}
-                  required
-                />
-                <span className="input-unit">-</span>
-              </div>
-            </label>
-            
-            <label className="form-label">
-              <span>Reservoir Constant K</span>
-              <div className="input-with-unit">
-                <input 
-                  className="form-input"
-                  type="number" 
-                  step="0.1"
-                  min="0.1"
-                  value={linearReservoirConstantK} 
-                  onChange={e => setLinearReservoirConstantK(+e.target.value)}
-                  required
-                />
-                <span className="input-unit">hours</span>
-              </div>
-            </label>
-            
-            <label className="form-label">
-              <span>Initial Storage</span>
-              <div className="input-with-unit">
-                <input 
-                  className="form-input"
-                  type="number" 
-                  step="0.1"
-                  min="0"
-                  value={initialStorageCubicMeters} 
-                  onChange={e => setInitialStorageCubicMeters(+e.target.value)}
-                />
-                <span className="input-unit">m³</span>
-              </div>
-            </label>
+          {/* Watershed Parameters */}
+          <div className="parameter-group watershed">
+            <h3 className="group-title">
+              <span className="group-icon">🏔️</span>
+              Watershed
+            </h3>
+            <div className="parameter-row">
+              <label className="parameter-field">
+                <span className="field-label">Area</span>
+                <div className="input-container">
+                  <input 
+                    className="field-input"
+                    type="number" 
+                    step="0.1"
+                    min="0.1"
+                    value={catchmentAreaKm2} 
+                    onChange={e => setCatchmentAreaKm2(+e.target.value)}
+                    required
+                  />
+                  <span className="field-unit">km²</span>
+                </div>
+              </label>
+              
+              <label className="parameter-field">
+                <span className="field-label">Runoff Coeff.</span>
+                <div className="input-container">
+                  <input 
+                    className="field-input"
+                    type="number" 
+                    step="0.01"
+                    min="0"
+                    max="1"
+                    value={runoffCoefficient} 
+                    onChange={e => setRunoffCoefficient(+e.target.value)}
+                    required
+                  />
+                  <span className="field-unit">-</span>
+                </div>
+              </label>
+            </div>
           </div>
-        </section>
 
-        {/* Simulation Section */}
-        <section>
-          <h3 className="form-section-header">Simulation Parameters</h3>
-          <div className="input-group">
-            <label className="form-label">
-              <span>Time Step</span>
-              <div className="input-with-unit">
-                <input 
-                  className="form-input"
-                  type="number" 
-                  step="0.1"
-                  min="0.1"
-                  max="2"
-                  value={timeStepHours} 
-                  onChange={e => setTimeStepHours(+e.target.value)}
-                  required
-                />
-                <span className="input-unit">hours</span>
-              </div>
-            </label>
+          {/* Reservoir Parameters */}
+          <div className="parameter-group reservoir">
+            <h3 className="group-title">
+              <span className="group-icon">🏗️</span>
+              Reservoir
+            </h3>
+            <div className="parameter-row">
+              <label className="parameter-field">
+                <span className="field-label">Constant K</span>
+                <div className="input-container">
+                  <input 
+                    className="field-input"
+                    type="number" 
+                    step="0.1"
+                    min="0.1"
+                    value={linearReservoirConstantK} 
+                    onChange={e => setLinearReservoirConstantK(+e.target.value)}
+                    required
+                  />
+                  <span className="field-unit">hours</span>
+                </div>
+              </label>
+              
+              <label className="parameter-field">
+                <span className="field-label">Initial Storage</span>
+                <div className="input-container">
+                  <input 
+                    className="field-input"
+                    type="number" 
+                    step="0.1"
+                    min="0"
+                    value={initialStorageCubicMeters} 
+                    onChange={e => setInitialStorageCubicMeters(+e.target.value)}
+                  />
+                  <span className="field-unit">m³</span>
+                </div>
+              </label>
+            </div>
           </div>
-        </section>
+
+          {/* Simulation Parameters */}
+          <div className="parameter-group simulation">
+            <h3 className="group-title">
+              <span className="group-icon">⚙️</span>
+              Simulation
+            </h3>
+            <div className="parameter-row">
+              <label className="parameter-field">
+                <span className="field-label">Time Step</span>
+                <div className="input-container">
+                  <input 
+                    className="field-input"
+                    type="number" 
+                    step="0.1"
+                    min="0.1"
+                    max="2"
+                    value={timeStepHours} 
+                    onChange={e => setTimeStepHours(+e.target.value)}
+                    required
+                  />
+                  <span className="field-unit">hours</span>
+                </div>
+              </label>
+            </div>
+          </div>
+        </div>
         
-        <button type="submit" className="submit-button">
-          Generate Hydrograph
-        </button>
+        <div className="form-actions">
+          <button type="submit" className="submit-button">
+            <span className="button-icon">🔄</span>
+            Generate Hydrograph
+          </button>
+        </div>
       </form>
     </div>
   );

@@ -1,317 +1,710 @@
-/* Theme Variables */
-:root {
-  /* Light Mode Colors */
-  --bg-primary: #ffffff;
-  --bg-secondary: #f8fafc;
-  --bg-card: #ffffff;
-  --text-primary: #1e293b;
-  --text-secondary: #64748b;
-  --text-muted: #94a3b8;
-  --border-color: #e2e8f0;
-  --border-focus: #3b82f6;
-  --accent-primary: #3b82f6;
-  --accent-hover: #2563eb;
-  --accent-light: #dbeafe;
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-}
 
-/* Dark Mode Colors */
-[data-theme="dark"] {
-  --bg-primary: #0f172a;
-  --bg-secondary: #1e293b;
-  --bg-card: #334155;
-  --text-primary: #f1f5f9;
-  --text-secondary: #cbd5e1;
-  --text-muted: #94a3b8;
-  --border-color: #475569;
-  --border-focus: #60a5fa;
-  --accent-primary: #60a5fa;
-  --accent-hover: #3b82f6;
-  --accent-light: #1e3a8a;
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
-  --gradient-primary: linear-gradient(135deg, #4c1d95 0%, #1e1b4b 100%);
-  --gradient-secondary: linear-gradient(135deg, #7c3aed 0%, #c026d3 100%);
-}
 
-/* Auto detect system preference */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg-primary: #0f172a;
-    --bg-secondary: #1e293b;
-    --bg-card: #334155;
-    --text-primary: #f1f5f9;
-    --text-secondary: #cbd5e1;
-    --text-muted: #94a3b8;
-    --border-color: #475569;
-    --border-focus: #60a5fa;
-    --accent-primary: #60a5fa;
-    --accent-hover: #3b82f6;
-    --accent-light: #1e3a8a;
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
-    --gradient-primary: linear-gradient(135deg, #4c1d95 0%, #1e1b4b 100%);
-    --gradient-secondary: linear-gradient(135deg, #7c3aed 0%, #c026d3 100%);
-  }
-}
+/* PrecipitationForm.css - Uses theme variables from base-styles.css */
 
-/* Form Container */
+/* Main Container with enhanced gradient background and shadow */
 .hydrology-form-container {
-  max-width: 600px;
+  max-width: 1000px;
   margin: 0 auto;
-  padding: 2rem;
-  background: var(--bg-card);
-  border-radius: 16px;
-  box-shadow: var(--shadow-lg);
-  border: 1px solid var(--border-color);
-  transition: all 0.3s ease;
+  padding: var(--theme-spacing-lg);
+  background: linear-gradient(145deg, var(--theme-card), var(--theme-background-secondary));
+  border-radius: var(--theme-radius-lg);
+  box-shadow: var(--theme-box-shadow);
+  border: 1px solid var(--theme-border);
+  transition: all var(--theme-transition);
+  position: relative;
+  overflow: hidden;
 }
 
 .hydrology-form-container:hover {
-  box-shadow: var(--shadow-lg), 0 0 0 1px var(--accent-primary);
+  box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  transform: translateY(-3px);
 }
 
-/* Form Title */
-.form-title {
+/* Form Header with animated underline */
+.form-header {
   text-align: center;
-  margin-bottom: 2rem;
-  color: var(--text-primary);
-  font-size: 1.875rem;
-  font-weight: 700;
-  background: var(--gradient-primary);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  margin-bottom: var(--theme-spacing-xl);
+  padding-bottom: var(--theme-spacing-lg);
+  border-bottom: 1px solid var(--theme-border);
+  position: relative;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-/* Form Layout */
-.hydrology-form {
-  display: grid;
-  gap: 2rem;
+.form-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50px;
+  height: 3px;
+  background: linear-gradient(to right, var(--theme-primary), var(--theme-accent));
+  border-radius: 3px;
+  transition: width var(--theme-transition);
 }
 
-/* Section Headers */
-.form-section-header {
+.form-header:hover::after {
+  width: 100px;
+}
+
+.form-title {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 1rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 2px solid var(--border-color);
-  color: var(--text-primary);
-  font-size: 1.25rem;
-  font-weight: 600;
+  justify-content: center;
+  gap: var(--theme-spacing-sm);
+  font-size: var(--theme-font-size-2xl);
+  font-weight: 700;
+  color: var(--theme-text-primary);
+  margin: 0 0 var(--theme-spacing-sm) 0;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-.form-section-header::before {
-  content: '';
-  width: 4px;
-  height: 24px;
-  background: var(--gradient-primary);
-  border-radius: 2px;
+.form-icon {
+  font-size: var(--theme-font-size-2xl);
+  color: var(--theme-primary);
+  animation: pulse 2s ease-in-out infinite;
 }
 
-/* Input Groups */
-.input-group {
-  display: grid;
-  gap: 1.5rem;
+.form-description {
+  color: var(--theme-text-secondary);
+  font-size: var(--theme-font-size-base);
+  margin: 0 auto;
+  max-width: 600px;
+  line-height: var(--theme-line-height-base);
+  font-weight: 400;
 }
 
-/* Label Styles */
-.form-label {
+/* Form Layout with better spacing */
+.hydrology-form {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  color: var(--text-secondary);
-  font-weight: 500;
-  font-size: 0.875rem;
-  text-transform: uppercase;
-  letter-spacing: 0.025em;
+  gap: var(--theme-spacing-xl);
+  opacity: 0;
+  animation: fadeIn 0.6s ease-out forwards;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--theme-spacing-lg);
 }
 
-/* Input Styles */
-.form-input {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  border: 2px solid var(--border-color);
-  border-radius: 8px;
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  font-size: 1rem;
-  transition: all 0.2s ease;
+/* Parameters Grid with EXPLICIT two-column layout for desktop */
+.parameters-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--theme-spacing-lg);
+  max-width: 1200px;
+  margin: 0 auto;
+  align-items: start;
+}
+
+/* Desktop: TRUE 2x2 Grid Layout */
+@media (min-width: 992px) {
+  .parameters-grid {
+    grid-template-columns: 1fr 1fr !important;
+    grid-template-rows: 1fr 1fr !important;
+    gap: var(--theme-spacing-xl) !important;
+    align-items: stretch;
+    max-width: 900px !important;
+  }
+  
+  /* First row: Precipitation and Watershed */
+  .parameter-group.precipitation {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+  }
+  
+  .parameter-group.watershed {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+  }
+  
+  /* Second row: Reservoir and Simulation */
+  .parameter-group.reservoir {
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+  }
+  
+  .parameter-group.simulation {
+    grid-column: 2 !important;
+    grid-row: 2 !important;
+  }
+}
+
+/* Parameter Group with improved professional styling */
+.parameter-group {
+  padding: var(--theme-spacing-lg);
+  background: linear-gradient(145deg, var(--theme-card), var(--theme-background));
+  border-radius: var(--theme-radius-lg);
   box-shadow: var(--shadow-sm);
+  border: 1px solid var(--theme-border);
+  transition: all var(--theme-transition);
+  opacity: 0;
+  animation: fadeIn 0.6s ease-out forwards 0.2s;
+  margin-bottom: var(--theme-spacing-md);
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.form-input:focus {
-  outline: none;
-  border-color: var(--border-focus);
-  box-shadow: 0 0 0 3px var(--accent-light);
-  transform: translateY(-1px);
+.parameter-group:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
-.form-input:hover {
-  border-color: var(--accent-primary);
+.parameter-group:nth-child(2) {
+  animation-delay: 0.3s;
 }
 
-/* Input with units */
-.input-with-unit {
+.parameter-group:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+/* Group Title with improved styling */
+.group-title {
+  display: flex;
+  align-items: center;
+  gap: var(--theme-spacing-xs);
+  font-size: var(--theme-font-size-lg);
+  font-weight: 600;
+  color: var(--theme-text-primary);
+  margin-bottom: var(--theme-spacing-md);
+  padding-bottom: var(--theme-spacing-sm);
+  border-bottom: 1px solid var(--theme-border);
   position: relative;
 }
 
-.input-unit {
+.group-title::after {
+  content: '';
   position: absolute;
-  right: 1rem;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--text-muted);
-  font-size: 0.875rem;
-  pointer-events: none;
+  bottom: -1px;
+  left: 0;
+  width: 60px;
+  height: 2px;
+  background-color: var(--theme-primary);
+  transition: width var(--theme-transition);
 }
 
-.input-with-unit .form-input {
-  padding-right: 3rem;
+.parameter-group:hover .group-title::after {
+  width: 100px;
 }
 
-/* Submit Button */
-.submit-button {
+.group-title svg, 
+.group-title i {
+  color: var(--theme-primary);
+}
+
+/* Parameter Rows with improved alignment - FIXED for 2 columns max */
+.parameter-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--theme-spacing-lg);
+  margin-bottom: var(--theme-spacing-sm);
+  align-items: end;
+}
+
+/* On desktop, allow 2 parameters per row within each group */
+@media (min-width: 992px) {
+  .parameter-row {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--theme-spacing-md);
+  }
+  
+  /* For simulation group with single parameter, still use full width */
+  .parameter-group.simulation .parameter-row {
+    grid-template-columns: 1fr;
+    justify-items: stretch;
+  }
+  
+  .parameter-group.simulation .parameter-field {
+    max-width: none;
+    width: 100%;
+  }
+}
+
+/* Parameter Fields with enhanced professional styling */
+.parameter-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--theme-spacing-xs);
+  margin-bottom: var(--theme-spacing-md);
+  position: relative;
+}
+
+.field-label {
+  font-size: var(--theme-font-size-sm);
+  font-weight: 600;
+  color: var(--theme-text-secondary);
+  margin-bottom: var(--theme-spacing-xs);
+  display: flex;
+  align-items: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.field-label svg,
+.field-label i {
+  margin-right: var(--theme-spacing-xs);
+  font-size: var(--theme-font-size-sm);
+  color: var(--theme-primary);
+}
+
+/* Input Field with improved focus and hover effects */
+.field-input {
+  font-size: var(--theme-font-size-base);
   width: 100%;
-  padding: 1rem 2rem;
-  background: var(--gradient-primary);
+  padding: var(--theme-spacing-sm) var(--theme-spacing-lg) var(--theme-spacing-sm) var(--theme-spacing-sm);
+  border: 1px solid var(--theme-border);
+  border-radius: var(--theme-radius-sm);
+  color: var(--theme-text-primary);
+  background-color: var(--theme-background);
+  transition: all var(--theme-transition-fast);
+  height: 42px;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.field-input:focus {
+  border-color: var(--theme-border-focus);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.field-input:hover:not(:focus) {
+  border-color: var(--theme-primary);
+}
+
+/* Input container styling for better unit positioning */
+.input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-container .field-input {
+  flex: 1;
+  padding-right: 3rem; /* Make space for unit */
+}
+
+.input-container .field-unit {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 42px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--theme-text-secondary);
+  font-size: var(--theme-font-size-sm);
+  font-weight: 500;
+  pointer-events: none;
+  background: linear-gradient(to left, rgba(var(--bg-primary-rgb, 255, 255, 255), 0.9), rgba(var(--bg-primary-rgb, 255, 255, 255), 0.5));
+  border-left: 1px solid rgba(var(--border-color-rgb, 0, 0, 0), 0.1);
+  border-top-right-radius: var(--theme-radius-sm);
+  border-bottom-right-radius: var(--theme-radius-sm);
+}
+
+/* Button Styles with professional appearance */
+.action-button {
+  background: linear-gradient(to right, var(--accent-primary), var(--accent-hover));
   color: white;
   border: none;
-  border-radius: 12px;
-  font-size: 1rem;
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md) var(--spacing-xl);
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.025em;
+  font-size: 1rem;
   cursor: pointer;
   transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
   box-shadow: var(--shadow-md);
-  margin-top: 1rem;
+  position: relative;
+  overflow: hidden;
+  min-width: 200px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
 }
 
-.submit-button:hover {
+.action-button:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
-  background: var(--gradient-secondary);
 }
 
-.submit-button:active {
+.action-button:active {
   transform: translateY(0);
+  box-shadow: var(--shadow-sm);
 }
 
-.submit-button:focus {
-  outline: none;
-  box-shadow: var(--shadow-lg), 0 0 0 3px var(--accent-light);
+/* Button shine effect */
+.action-button::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%);
+  transform: rotate(30deg);
+  transition: all 0.6s ease;
+  opacity: 0;
+}
+
+.action-button:hover::after {
+  opacity: 1;
+  transform: rotate(30deg) translate(100%, -100%);
+}
+
+/* Button Icon */
+.action-button svg,
+.action-button i,
+.action-button span[role="img"] {
+  margin-right: var(--spacing-xs);
+  font-size: 1.125rem;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
   .hydrology-form-container {
-    margin: 1rem;
-    padding: 1.5rem;
-    border-radius: 12px;
+    padding: var(--theme-spacing-md);
+    margin: var(--theme-spacing-sm);
+  }
+  
+  .parameters-grid {
+    grid-template-columns: 1fr;
+    gap: var(--theme-spacing-md);
+    max-width: none;
+  }
+  
+  .parameter-row {
+    grid-template-columns: 1fr;
+    gap: var(--theme-spacing-sm);
   }
   
   .form-title {
-    font-size: 1.5rem;
-    margin-bottom: 1.5rem;
+    font-size: var(--theme-font-size-xl);
   }
   
-  .hydrology-form {
-    gap: 1.5rem;
+  .submit-button {
+    width: 100%;
+    min-width: unset;
   }
   
-  .form-section-header {
-    font-size: 1.125rem;
-    margin-bottom: 0.75rem;
+  .parameter-group.simulation {
+    grid-column: span 1;
+    max-width: none;
+    margin: 0;
   }
   
-  .input-group {
-    gap: 1rem;
+  .field-input {
+    height: 46px; /* Slightly taller on mobile for better touch targets */
+  }
+  
+  .field-unit {
+    height: 46px;
+  }
+  
+  .parameter-group {
+    padding: var(--theme-spacing-md);
   }
 }
 
 @media (max-width: 480px) {
   .hydrology-form-container {
-    margin: 0.5rem;
-    padding: 1rem;
+    padding: var(--theme-spacing-sm);
+    margin: var(--theme-spacing-xs);
+  }
+  
+  .form-header {
+    margin-bottom: var(--theme-spacing-lg);
+    padding-bottom: var(--theme-spacing-md);
   }
   
   .form-title {
-    font-size: 1.25rem;
+    font-size: var(--theme-font-size-lg);
+    flex-direction: column;
+    gap: var(--theme-spacing-xs);
   }
   
-  .hydrology-form {
-    gap: 1rem;
+  .form-description {
+    font-size: var(--theme-font-size-sm);
+  }
+}
+
+/* Desktop optimizations for compactness */
+@media (min-width: 1024px) {
+  .hydrology-form-container {
+    padding: var(--theme-spacing-xl);
   }
   
-  .input-group {
-    gap: 0.75rem;
+  .form-header {
+    margin-bottom: var(--theme-spacing-lg);
+    padding-bottom: var(--theme-spacing-md);
   }
   
-  .form-input {
-    padding: 0.625rem 0.75rem;
+  .form-title {
+    font-size: var(--theme-font-size-xl);
+  }
+  
+  .form-description {
+    font-size: var(--theme-font-size-sm);
+  }
+  
+  .parameters-grid {
+    grid-template-columns: 1fr 1fr !important;
+    grid-template-rows: 1fr 1fr !important;
+    gap: var(--theme-spacing-xl) !important;
+    align-items: stretch;
+    max-width: 800px !important;
+  }
+  
+  /* True 2x2 Grid Layout */
+  .parameter-group.precipitation {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+  }
+  
+  .parameter-group.watershed {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+  }
+  
+  .parameter-group.reservoir {
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+  }
+  
+  .parameter-group.simulation {
+    grid-column: 2 !important;
+    grid-row: 2 !important;
+  }
+  
+  .parameter-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1200px) {
+  .hydrology-form-container {
+    max-width: 900px;
+  }
+  
+  .parameters-grid {
+    max-width: 750px;
+  }
+}
+
+/* Responsive adjustments for form fields */
+@media (max-width: 576px) {
+  .parameter-row {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+  
+  .field-input {
+    height: 46px; /* Slightly taller on mobile for better touch targets */
+  }
+  
+  .field-unit {
+    height: 46px;
+  }
+  
+  .parameter-group {
+    padding: var(--spacing-md);
+  }
+  
+  .parameters-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+}
+
+@media (min-width: 577px) and (max-width: 768px) {
+  .parameters-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-lg);
+  }
+  
+  .parameter-row {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  }
+}
+
+@media (min-width: 769px) and (max-width: 991px) {
+  .parameters-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-lg);
+    max-width: 800px;
+  }
+  
+  .parameter-row {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  }
+}
+
+@media (min-width: 992px) {
+  /* Desktop specific styling */
+  .parameter-field {
+    position: relative;
+  }
+  
+  /* Add subtle highlights to input fields on larger screens */
+  .field-input:focus {
+    transform: translateY(-1px);
+  }
+  
+  /* Ensure proper spacing in two-column layout */
+  .parameter-group {
+    min-height: auto;
+  }
+  
+  /* Balance the layout by adjusting parameter group heights */
+  .parameter-group.precipitation,
+  .parameter-group.watershed,
+  .parameter-group.reservoir,
+  .parameter-group.simulation {
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  /* Ensure parameter rows expand to fill available space */
+  .parameter-group .parameter-row {
+    flex: 1;
+    align-content: start;
+    width: 100%;
+  }
+  
+  /* Make sure all parameter groups are exactly equal width */
+  .parameters-grid .parameter-group {
+    min-width: 0;
+    max-width: none;
+  }
+  
+  /* Special handling for simulation to use full width */
+  .parameter-group.simulation {
+    justify-self: stretch;
+  }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Focus management for keyboard navigation */
+.parameter-field:focus-within .field-label {
+  color: var(--accent-primary);
+}
+
+.submit-button:focus {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .field-input {
+    border-width: 2px;
   }
   
   .submit-button {
-    padding: 0.875rem 1.5rem;
+    border: 2px solid currentColor;
   }
 }
 
-/* Grid Layout for larger screens */
-@media (min-width: 769px) {
-  .input-group {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
-  }
-  
-  .input-group .form-label:nth-child(odd):last-child {
-    grid-column: 1;
-  }
+/* Form Section with improved padding and alignment */
+.form-section {
+  margin-bottom: var(--spacing-xl);
 }
 
-/* Accessibility */
-.form-input:focus-visible {
-  outline: 2px solid var(--accent-primary);
-  outline-offset: 2px;
+/* Simulation Section with improved positioning */
+.simulation-section {
+  max-width: 400px;
+  margin: var(--spacing-xl) auto;
+  padding: var(--spacing-lg);
+  background: linear-gradient(145deg, var(--bg-card), var(--bg-secondary));
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-color);
+  transition: all 0.3s ease;
 }
 
-.submit-button:focus-visible {
-  outline: 2px solid var(--accent-primary);
-  outline-offset: 2px;
-}
-
-/* Animations */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.hydrology-form-container {
-  animation: fadeInUp 0.6s ease-out;
-}
-
-/* Loading state */
-.submit-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.submit-button:disabled:hover {
-  transform: none;
+.simulation-section:hover {
+  transform: translateY(-2px);
   box-shadow: var(--shadow-md);
+}
+
+/* Form Actions with improved positioning */
+.form-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--theme-spacing-xl);
+  padding-top: var(--theme-spacing-lg);
+  border-top: 1px solid var(--theme-border);
+  grid-column: 1 / -1; /* Span full width in grid layout */
+}
+
+/* Submit button styling to match the new layout */
+.submit-button {
+  background: linear-gradient(to right, var(--theme-primary), var(--theme-accent));
+  color: white;
+  border: none;
+  border-radius: var(--theme-radius-md);
+  padding: var(--theme-spacing-md) var(--theme-spacing-xl);
+  font-weight: 600;
+  font-size: var(--theme-font-size-base);
+  cursor: pointer;
+  transition: all var(--theme-transition);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: var(--theme-box-shadow);
+  position: relative;
+  overflow: hidden;
+  min-width: 250px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--theme-spacing-sm);
+}
+
+.submit-button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.submit-button:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Button shine effect */
+.submit-button::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%);
+  transform: rotate(30deg);
+  transition: all 0.6s ease;
+  opacity: 0;
+}
+
+.submit-button:hover::after {
+  opacity: 1;
+  transform: rotate(30deg) translate(100%, -100%);
+}
+
+.button-icon {
+  margin-right: var(--theme-spacing-xs);
+  font-size: var(--theme-font-size-lg);
 }

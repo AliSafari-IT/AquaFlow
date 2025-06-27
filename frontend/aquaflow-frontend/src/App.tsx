@@ -6,7 +6,6 @@ import AdvancedHydrologyForm from "./components/AdvancedHydrologyForm";
 import CsvHydrographLoader from "./components/CsvHydrographLoader";
 import HydrographChart from "./components/HydrographChart";
 import AdvancedResultsDisplay from "./components/AdvancedResultsDisplay";
-import { ThemeToggle } from "./components/ThemeToggle";
 import TopNavBar from "./components/TopNavBar";
 import "./App.css";
 import AboutPage from "./components/AboutPage";
