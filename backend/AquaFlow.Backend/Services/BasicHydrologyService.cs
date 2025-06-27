@@ -14,7 +14,10 @@ public class BasicHydrologyService : IHydrologyService
             double inflow = (t < input.DurationHours)
                 ? input.IntensityMmPerHour * area * runoffCoef / 3.6
                 : 0;
-            double outflow = storage / K;
+            // Convert K from hours to seconds for proper unit consistency
+            double KSeconds = K * 3600;
+            double outflow = storage / KSeconds;
+            // Storage change: (inflow - outflow) in m³/s * dt in hours * 3600 s/hour = change in m³
             storage += (inflow - outflow) * dt * 3600;
             if (storage < 0) storage = 0;
             hydro.Add(new HydrographDataPoint { TimeHours = t, FlowCubicMetersPerSecond = outflow });

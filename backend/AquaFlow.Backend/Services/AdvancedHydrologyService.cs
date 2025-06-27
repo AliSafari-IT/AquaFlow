@@ -55,7 +55,8 @@ public class AdvancedHydrologyService : IAdvancedHydrologyService
             inflow = Math.Max(0, inflow - etLoss);
             
             // Linear reservoir routing
-            double outflow = storage / K + input.BaseFlowCubicMetersPerSecond;
+            // Convert K from hours to seconds for correct unit consistency
+            double outflow = storage / (K * 3600) + input.BaseFlowCubicMetersPerSecond;
             storage += (inflow - outflow) * dt * 3600;
             if (storage < 0) storage = 0;
             
@@ -146,7 +147,8 @@ public class AdvancedHydrologyService : IAdvancedHydrologyService
             double inflow = incrementalRunoff * area * 1000 / (dt * 3600);
             
             // Linear reservoir routing
-            double outflow = storage / K + input.BaseFlowCubicMetersPerSecond;
+            // Convert K from hours to seconds for correct unit consistency
+            double outflow = storage / (K * 3600) + input.BaseFlowCubicMetersPerSecond;
             storage += (inflow - outflow) * dt * 3600;
             if (storage < 0) storage = 0;
             
@@ -242,7 +244,8 @@ public class AdvancedHydrologyService : IAdvancedHydrologyService
             // Route through reservoir chain
             for (int i = 0; i < input.NumberOfReservoirs; i++)
             {
-                double outflow = storage[i] / K + (i == input.NumberOfReservoirs - 1 ? input.BaseFlowCubicMetersPerSecond : 0);
+                // Convert K from hours to seconds for correct unit consistency
+                double outflow = storage[i] / (K * 3600) + (i == input.NumberOfReservoirs - 1 ? input.BaseFlowCubicMetersPerSecond : 0);
                 storage[i] += (inflow - outflow) * dt * 3600;
                 if (storage[i] < 0) storage[i] = 0;
                 
