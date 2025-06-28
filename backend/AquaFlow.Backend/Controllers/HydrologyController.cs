@@ -25,6 +25,13 @@ public class HydrologyController : ControllerBase
         return Ok(_advancedSvc.CalculateAdvancedHydrograph(input));
     }
 
+    [HttpPost("advanced-hydrograph")]
+    public ActionResult<HydrographResult> AdvancedHydrographAlias([FromBody] AdvancedHydrologicalInput input)
+    {
+        // Alias endpoint for /api/advanced-hydrograph
+        return CalculateAdvanced(input);
+    }
+
     [HttpGet("models")]
     public ActionResult<object> GetAvailableModels()
     {

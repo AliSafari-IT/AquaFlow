@@ -151,7 +151,7 @@ const SimpleModelPage: React.FC<{ csvData: CsvDataPoint[] }> = ({ csvData }) => 
       console.error("Error calculating hydrograph:", error);
       const errorMessage = isDemoMode() 
         ? "Failed to calculate hydrograph in demo mode. Please try again."
-        : "Failed to calculate hydrograph. Make sure the backend server is running on http://localhost:5185";
+        : "Failed to calculate hydrograph. Make sure the backend server is running on https://localhost:7079";
       alert(errorMessage);
     } finally {
       setIsLoading(false);
@@ -269,7 +269,7 @@ const AdvancedModelPage: React.FC<{ csvData: CsvDataPoint[] }> = ({ csvData }) =
       console.error("Error calculating advanced hydrograph:", error);
       const errorMessage = isDemoMode()
         ? "Failed to calculate advanced hydrograph in demo mode. Please try again."
-        : "Failed to calculate advanced hydrograph. Make sure the backend server is running on http://localhost:5185";
+        : "Failed to calculate advanced hydrograph. Make sure the backend server is running on https://localhost:7079";
       alert(errorMessage);
     } finally {
       setIsLoading(false);
