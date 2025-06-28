@@ -323,28 +323,28 @@ deploy_backend() {
   fi
 }
 
-# Function to ensure port 7000 is free
+# Function to ensure port 7079 is free
 ensure_port_free() {
-  log "Ensuring port 7000 is free..."
+  log "Ensuring port 7079 is free..."
 
   # First try to stop the service gracefully
   sudo systemctl stop $SERVICE_NAME
   sleep 2
 
   # Check if port is still in use
-  PID=$(sudo lsof -t -i:7000)
+  PID=$(sudo lsof -t -i:7079)
   if [ -n "$PID" ]; then
-    log "Port 7000 is still in use by process $PID, killing it..."
+    log "Port 7079 is still in use by process $PID, killing it..."
     sudo kill -9 $PID
     sleep 2
 
     # Verify port is free
-    if sudo lsof -i :7000 >/dev/null 2>&1; then
-      handle_error "Failed to free port 7000" "exit"
+    if sudo lsof -i :7079 >/dev/null 2>&1; then
+      handle_error "Failed to free port 7079" "exit"
     fi
   fi
 
-  log "Port 7000 is available"
+  log "Port 7079 is available"
 }
 
 # Function to create systemd service file
@@ -400,9 +400,9 @@ check_health() {
     sleep 5
   fi
 
-  # Check if port 7000 is actually in use
-  if ! sudo lsof -i :7000 >/dev/null 2>&1; then
-    log "WARNING: Nothing is listening on port 7000!"
+  # Check if port 7079 is actually in use
+  if ! sudo lsof -i :7079 >/dev/null 2>&1; then
+    log "WARNING: Nothing is listening on port 7079!"
     log "Checking service status again..."
     sudo systemctl status $SERVICE_NAME --no-pager >>"$DEPLOY_LOG"
   fi
