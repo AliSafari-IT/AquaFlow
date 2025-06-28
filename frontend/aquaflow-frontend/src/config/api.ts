@@ -2,7 +2,7 @@
 export const API_CONFIG = {
   // Development environment (local backend)
   development: {
-    baseURL: 'http://localhost:5185',
+    baseURL: 'https://localhost:7079', // Local backend URL
     endpoints: {
       hydrology: '/api/hydrology/calculate',
       hydrologyAdvanced: '/api/hydrology/calculate-advanced',
@@ -51,5 +51,5 @@ export const buildApiUrl = (endpoint: keyof typeof API_CONFIG.development.endpoi
 
 // Check if we're in demo mode (GitHub Pages)
 export const isDemoMode = (): boolean => {
-  return getCurrentEnvironment() === 'production';
+  return getCurrentEnvironment()  === 'production' && window.location.hostname.includes('github.io');
 };
