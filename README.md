@@ -148,7 +148,7 @@ AquaFlow offers a complete suite of hydrological modeling tools with an intuitiv
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/AquaFlow.git
+git clone https://github.com/AliSafari-IT/AquaFlow.git
 cd AquaFlow
 ```
 
@@ -561,9 +561,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 For questions, issues, or feature requests:
 
-- **GitHub Issues** - [Create an issue](https://github.com/YOUR_USERNAME/AquaFlow/issues)
+- **GitHub Issues** - [Create an issue](https://github.com/AliSafari-IT/AquaFlow/issues)
 - **Documentation** - Visit `/help` page in the application
-- **Email** - your.email@example.com
+- **Email** - contact@asafarim.com
 
 ---
 
