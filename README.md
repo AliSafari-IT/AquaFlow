@@ -4,7 +4,7 @@
 
 [![React](https://img.shields.io/badge/React-18.x-blue.svg)](https://reactjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue.svg)](https://www.typescriptlang.org/)
-[![.NET](https://img.shields.io/badge/.NET-8.0-purple.svg)](https://dotnet.microsoft.com/)
+[![.NET](https://img.shields.io/badge/.NET-9.0-purple.svg)](https://dotnet.microsoft.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ---
@@ -13,12 +13,15 @@
 
 AquaFlow offers a complete suite of hydrological modeling tools with an intuitive, professional interface. The platform supports multiple modeling approaches, real-world data integration, and advanced visualization capabilities for comprehensive watershed analysis.
 
+![AquaFlow Interactive Welcome](frontend/aquaflow-frontend/public/img/AquaFlow-interactive-welcome.png)
+
 ### Key Capabilities
-- **Multiple Modeling Approaches** - Simple and advanced hydrological algorithms
+- **Multiple Modeling Approaches** - From simple educational models to advanced research-grade algorithms
 - **Real Data Integration** - CSV data loading and model validation
 - **Professional Visualization** - Interactive charts with model-observation comparison
 - **Modern Architecture** - Route-based navigation with clean, maintainable code
 - **Responsive Design** - Works seamlessly on desktop and mobile devices
+- **Physics-Based Models** - Implementation of established hydrological theories
 
 ---
 
@@ -28,26 +31,65 @@ AquaFlow offers a complete suite of hydrological modeling tools with an intuitiv
 - Professional welcome interface with feature overview
 - Guided navigation to different modeling approaches
 - Clean, modern design with dark mode support
+- Interactive feature showcase
 
 ### 🌧️ **Simple Rainfall-Runoff Model** (`/simple`)
 - Basic linear reservoir model for quick watershed analysis
 - Adjustable precipitation intensity and duration
 - Catchment area and runoff coefficient parameters
 - Real-time hydrograph generation and visualization
+- Ideal for educational purposes and quick estimates
+
+![Generated Hydrograph Charts](frontend/aquaflow-frontend/public/img/Generated-Hydrograph-charts.png)
 
 ### ⚙️ **Advanced Hydrological Models** (`/advanced`)
-- Multiple modeling algorithms:
-  - **SCS Curve Number Method**
-  - **Rational Method**
-  - **Unit Hydrograph Method**
+- Five sophisticated modeling algorithms:
+  - **Advanced Linear Reservoir** - Enhanced linear reservoir with evapotranspiration
+  - **SCS Curve Number Method** - Industry-standard runoff estimation
+  - **Linear Reservoir Chain** - Multi-reservoir routing for realistic hydrograph shapes
+  - **Combined SCS-UH Model** - Advanced model combining SCS method with unit hydrograph theory
+  - **Green-Ampt Infiltration Model** - Physics-based infiltration modeling
 - Comprehensive watershed parameters:
   - Watershed slope and length
   - Antecedent moisture conditions
   - Evapotranspiration rates
   - Base flow components
+  - Soil hydraulic properties (for Green-Ampt)
 - Multi-reservoir routing capabilities
+- Real-time parameter validation and guidance
 
 ### 📊 **CSV Data Analysis** (`/csv`)
+- Load real-world hydrograph data from CSV files
+- Automatic data parsing and validation
+- Statistical summary (peak flow, duration, data points)
+- Standalone visualization and analysis
+- Data quality assessment and diagnostics
+
+![Load Hydrograph from CSV](frontend/aquaflow-frontend/public/img/Load-Hydrograph-from-CSV.png)
+
+### 🔄 **Model-Observation Comparison**
+- Overlay CSV observation data on modeled results
+- Visual distinction between modeled (blue solid) and observed (red dashed) data
+- Direct model validation and performance assessment
+- Persistent data sharing across all modeling approaches
+- Statistical comparison metrics
+
+![Model vs Observations Comparison](frontend/aquaflow-frontend/public/img/Model-vs-Observations-Comparison.png)
+
+### 📚 **Help & Documentation** (`/help`)
+- Comprehensive user guide with semantic sections
+- Model documentation and parameter explanations
+- FAQ section for common questions
+- Hash-based navigation for quick reference
+- Detailed model theory and applications
+
+### ℹ️ **About Page** (`/about`)
+- Project overview and mission statement
+- Technology stack information
+- Feature highlights and capabilities
+- Development team information
+
+---
 - Load real-world hydrograph data from CSV files
 - Automatic data parsing and validation
 - Statistical summary (peak flow, duration, data points)
@@ -171,32 +213,179 @@ AquaFlow/
 
 ## 🔬 Hydrological Models
 
-### **Simple Model**
-- **Algorithm:** Linear reservoir with constant parameters
-- **Use Case:** Quick watershed analysis and educational purposes
-- **Parameters:**
-  - Precipitation intensity (mm/hr)
-  - Storm duration (hours)
-  - Catchment area (km²)
-  - Runoff coefficient
-  - Linear reservoir constant (K)
+AquaFlow implements a comprehensive suite of hydrological models ranging from simple educational tools to sophisticated research-grade algorithms. Each model is designed for specific applications and provides unique insights into watershed behavior.
 
-### **Advanced Models**
+### **Simple Model** (`/simple`)
 
-#### **SCS Curve Number Method**
-- Industry-standard method for runoff estimation
-- Accounts for soil type and land use conditions
+**Algorithm:** Basic Linear Reservoir  
+**Use Case:** Educational purposes, quick estimates, concept demonstration  
+**Theory:** Simple rainfall-runoff relationship with linear storage routing
+
+**Key Parameters:**
+- Precipitation intensity (mm/hr)
+- Storm duration (hours)
+- Catchment area (km²)
+- Runoff coefficient (0-1)
+- Linear reservoir constant K (hours)
+- Initial storage (m³)
+
+**Applications:**
+- Educational demonstrations
+- Quick runoff estimates
+- Conceptual watershed modeling
+- Parameter sensitivity analysis
+
+---
+
+### **Advanced Models** (`/advanced`)
+
+#### **1. Advanced Linear Reservoir**
+
+**Theory:** Enhanced linear reservoir model with evapotranspiration and baseflow components  
+**Algorithm:** S(t+1) = S(t) + (Inflow - Outflow) × Δt  
+**Use Case:** Improved simple modeling with realistic losses
+
+**Key Features:**
+- Runoff coefficient based on SCS Curve Number
+- Evapotranspiration losses
+- Baseflow component
+- Variable antecedent moisture conditions
+
+**Parameters:**
+- All basic parameters plus:
+- Curve Number (30-100)
+- Antecedent Moisture Condition (Dry/Normal/Wet)
+- Evapotranspiration rate (mm/hr)
+- Base flow (m³/s)
+
+#### **2. SCS Curve Number Method**
+
+**Theory:** USDA Soil Conservation Service (SCS) method for runoff estimation  
+**Algorithm:** Q = (P - Ia)² / (P - Ia + S), where S = (25400/CN) - 254  
+**Use Case:** Standard practice for hydrological design and analysis
+
+**Key Features:**
+- Physics-based runoff calculation
+- Accounts for soil type and land use
 - Antecedent moisture condition adjustments
+- Slope-dependent time response
+- Initial abstraction consideration
 
-#### **Rational Method**
-- Peak discharge estimation for small watersheds
-- Time of concentration calculations
-- Suitable for urban hydrology applications
+**Parameters:**
+- Curve Number (30-100) for different soil-vegetation combinations
+- Antecedent Moisture Conditions (AMC I, II, III)
+- Watershed slope (affects time of concentration)
+- All basic watershed parameters
 
-#### **Unit Hydrograph Method**
-- Synthetic unit hydrograph generation
-- Multiple reservoir routing
-- Complex watershed response modeling
+**Typical Curve Numbers:**
+- Urban areas: 30-70 (low to high density)
+- Agricultural: 40-80 (good to poor management)
+- Forest: 30-70 (good to poor condition)
+- Pasture: 35-78 (good to poor condition)
+
+#### **3. Linear Reservoir Chain**
+
+**Theory:** Series of linear reservoirs for realistic hydrograph attenuation  
+**Algorithm:** Multiple reservoir routing in series: Q₍ᵢ₊₁₎ = S₍ᵢ₎/K₍ᵢ₎  
+**Use Case:** More realistic hydrograph shapes and peak attenuation
+
+**Key Features:**
+- Multiple reservoirs in series (1-10)
+- Distributed storage constants
+- SCS runoff calculation for inflow
+- Progressive hydrograph smoothing
+- Realistic recession curves
+
+**Parameters:**
+- Number of reservoirs (1-10)
+- Total reservoir constant K (distributed among reservoirs)
+- SCS Curve Number parameters
+- Antecedent moisture conditions
+
+**Applications:**
+- Natural watershed simulation
+- Flood routing studies
+- Peak flow attenuation analysis
+
+#### **4. Combined SCS-UH Model**
+
+**Theory:** Advanced model combining SCS method with Unit Hydrograph theory  
+**Algorithm:** Enhanced SCS with time of concentration and unit hydrograph concepts  
+**Use Case:** Professional hydrological design and complex watershed analysis
+
+**Key Features:**
+- Time of concentration calculation (Kirpich formula)
+- Enhanced SCS method with initial abstraction
+- Multiple reservoir routing (3 reservoirs)
+- Evapotranspiration losses
+- Extended simulation time
+- Comprehensive model diagnostics
+
+**Parameters:**
+- All SCS parameters
+- Watershed length (for time of concentration)
+- Watershed slope (affects response time)
+- Evapotranspiration rate
+- Base flow component
+
+**Advanced Calculations:**
+- tc = 0.0195 × L⁰·⁷⁷ × S⁻⁰·³⁸⁵ (Kirpich formula)
+- Initial abstraction Ia = 0.2 × S
+- Variable reservoir constants based on tc
+
+#### **5. Green-Ampt Infiltration Model** 🆕
+
+**Theory:** Physics-based infiltration model with sharp wetting front assumption  
+**Algorithm:** f(t) = Ks × [1 + (ψ × Δθ) / F(t)]  
+**Use Case:** Detailed infiltration analysis and soil-water interaction studies
+
+**Key Features:**
+- Physics-based infiltration calculations
+- Soil-specific hydraulic parameters
+- Ponding time calculation
+- Moisture deficit consideration
+- 11 predefined soil types with realistic parameters
+
+**Fundamental Equations:**
+- Infiltration rate: f(t) = Ks × [1 + (ψ × Δθ) / F(t)]
+- Time to ponding: tp = (ψ × Δθ) / (i × (i - Ks))
+- Moisture deficit: Δθ = θs - θi
+- Cumulative infiltration: F(t) - ψ × Δθ × ln(1 + F(t)/(ψ × Δθ)) = Ks × t
+
+**Soil Parameters (11 soil types):**
+- **Sand:** Ks=117.8 mm/h, ψ=49.5 mm, θs=0.437
+- **Loamy Sand:** Ks=29.9 mm/h, ψ=61.3 mm, θs=0.437
+- **Sandy Loam:** Ks=10.9 mm/h, ψ=110.1 mm, θs=0.453
+- **Loam:** Ks=3.4 mm/h, ψ=88.9 mm, θs=0.463
+- **Silt Loam:** Ks=6.5 mm/h, ψ=166.8 mm, θs=0.501
+- **Sandy Clay Loam:** Ks=1.5 mm/h, ψ=218.5 mm, θs=0.398
+- **Clay Loam:** Ks=1.0 mm/h, ψ=208.8 mm, θs=0.464
+- **Silty Clay Loam:** Ks=1.0 mm/h, ψ=273.0 mm, θs=0.471
+- **Sandy Clay:** Ks=0.6 mm/h, ψ=239.0 mm, θs=0.430
+- **Silty Clay:** Ks=0.5 mm/h, ψ=292.2 mm, θs=0.479
+- **Clay:** Ks=0.3 mm/h, ψ=316.3 mm, θs=0.475
+
+**Key Parameters:**
+- Soil type selection (auto-populates hydraulic parameters)
+- Saturated hydraulic conductivity Ks (mm/h)
+- Suction head ψ (mm)
+- Saturated moisture content θs (0.3-0.6)
+- Initial moisture content θi (0.01-0.2)
+
+**Model Outputs:**
+- Infiltration rate time series
+- Runoff hydrograph
+- Ponding time (if applicable)
+- Infiltration coefficient
+- Total infiltration volume
+- Moisture deficit calculations
+
+**Applications:**
+- Detailed soil infiltration studies
+- Agricultural hydrology
+- Urban stormwater management
+- Soil parameter sensitivity analysis
+- Green infrastructure design
 
 ---
 

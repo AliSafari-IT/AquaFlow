@@ -27,11 +27,27 @@ interface AdvancedHydrologicalParameters {
   // Advanced Parameters
   evapotranspirationMmPerHour: number;
   baseFlowCubicMetersPerSecond: number;
+  
+  // Green-Ampt Parameters
+  saturatedHydraulicConductivity: number;
+  suctionHead: number;
+  saturatedMoistureContent: number;
+  initialMoistureContent: number;
+  soilType: string;
 }
 
 interface ModelInfo {
   value: string;
   name: string;
+  description: string;
+}
+
+interface SoilTypeInfo {
+  value: string;
+  name: string;
+  ks: number;
+  psi: number;
+  thetaS: number;
   description: string;
 }
 
@@ -64,8 +80,16 @@ export default function AdvancedHydrologyForm({ onCalculate, isLoading = false }
   const [evapotranspirationMmPerHour, setEvapotranspirationMmPerHour] = useState(0.0);
   const [baseFlowCubicMetersPerSecond, setBaseFlowCubicMetersPerSecond] = useState(0.0);
   
+  // Green-Ampt parameters
+  const [saturatedHydraulicConductivity, setSaturatedHydraulicConductivity] = useState(10.0);
+  const [suctionHead, setSuctionHead] = useState(110.0);
+  const [saturatedMoistureContent, setSaturatedMoistureContent] = useState(0.45);
+  const [initialMoistureContent, setInitialMoistureContent] = useState(0.05);
+  const [soilType, setSoilType] = useState('Loam');
+  
   // State for model information
   const [availableModels, setAvailableModels] = useState<ModelInfo[]>([]);
+  const [soilTypes, setSoilTypes] = useState<SoilTypeInfo[]>([]);
   const [curveNumberGuidance, setCurveNumberGuidance] = useState<CurveNumberGuidance | null>(null);
   const [showCNGuidance, setShowCNGuidance] = useState(false);
 
@@ -75,10 +99,21 @@ export default function AdvancedHydrologyForm({ onCalculate, isLoading = false }
       .then(res => res.json())
       .then(data => {
         setAvailableModels(data.models || []);
+        setSoilTypes(data.soilTypes || []);
         setCurveNumberGuidance(data.curveNumberGuidance || null);
       })
       .catch(err => console.error('Failed to fetch model info:', err));
   }, []);
+
+  // Update Green-Ampt parameters when soil type changes
+  useEffect(() => {
+    const selectedSoilType = soilTypes.find(st => st.value === soilType);
+    if (selectedSoilType) {
+      setSaturatedHydraulicConductivity(selectedSoilType.ks);
+      setSuctionHead(selectedSoilType.psi);
+      setSaturatedMoistureContent(selectedSoilType.thetaS);
+    }
+  }, [soilType, soilTypes]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -96,7 +131,12 @@ export default function AdvancedHydrologyForm({ onCalculate, isLoading = false }
       timeStepHours,
       selectedModel,
       evapotranspirationMmPerHour,
-      baseFlowCubicMetersPerSecond
+      baseFlowCubicMetersPerSecond,
+      saturatedHydraulicConductivity,
+      suctionHead,
+      saturatedMoistureContent,
+      initialMoistureContent,
+      soilType
     });
   };
 
@@ -110,7 +150,8 @@ export default function AdvancedHydrologyForm({ onCalculate, isLoading = false }
   };
 
   const isReservoirChainModel = selectedModel === 'LinearReservoirChain' || selectedModel === 'CombinedModel';
-  const usesCurveNumber = selectedModel !== 'SimpleLinearReservoir';
+  const usesCurveNumber = selectedModel !== 'SimpleLinearReservoir' && selectedModel !== 'GreenAmptInfiltration';
+  const isGreenAmptModel = selectedModel === 'GreenAmptInfiltration';
 
   return (
     <div className="advanced-hydrology-form-container">
@@ -346,6 +387,129 @@ export default function AdvancedHydrologyForm({ onCalculate, isLoading = false }
                   {getAMCDescription(antecedentMoisture)}
                 </small>
               </label>
+            </div>
+          </section>
+        )}
+
+        {/* Green-Ampt Infiltration Parameters */}
+        {isGreenAmptModel && (
+          <section className="form-section">
+            <h3 className="form-section-header">
+              <span>🌱</span>
+              Green-Ampt Infiltration Parameters
+            </h3>
+            
+            <div className="input-group">
+              <label className="form-label">
+                <span>Soil Type</span>
+                <select 
+                  className="form-select"
+                  value={soilType} 
+                  onChange={e => setSoilType(e.target.value)}
+                >
+                  {soilTypes.map(soil => (
+                    <option key={soil.value} value={soil.value}>
+                      {soil.name}
+                    </option>
+                  ))}
+                </select>
+                <small className="field-description">
+                  {soilTypes.find(s => s.value === soilType)?.description || 'Select soil type for automatic parameter setting'}
+                </small>
+              </label>
+            </div>
+
+            <div className="input-grid">
+              <div className="input-group">
+                <label className="form-label">
+                  <span>Saturated Hydraulic Conductivity (Ks)</span>
+                  <div className="input-with-unit">
+                    <input 
+                      className="form-input"
+                      type="number" 
+                      step="0.1"
+                      min="0.1"
+                      max="200"
+                      value={saturatedHydraulicConductivity} 
+                      onChange={e => setSaturatedHydraulicConductivity(+e.target.value)}
+                    />
+                    <span className="input-unit">mm/h</span>
+                  </div>
+                  <small className="field-description">
+                    Saturated hydraulic conductivity of the soil (0.1-200 mm/h)
+                  </small>
+                </label>
+              </div>
+
+              <div className="input-group">
+                <label className="form-label">
+                  <span>Suction Head (ψ)</span>
+                  <div className="input-with-unit">
+                    <input 
+                      className="form-input"
+                      type="number" 
+                      step="0.1"
+                      min="10"
+                      max="400"
+                      value={suctionHead} 
+                      onChange={e => setSuctionHead(+e.target.value)}
+                    />
+                    <span className="input-unit">mm</span>
+                  </div>
+                  <small className="field-description">
+                    Suction head at the wetting front (10-400 mm)
+                  </small>
+                </label>
+              </div>
+
+              <div className="input-group">
+                <label className="form-label">
+                  <span>Saturated Moisture Content (θs)</span>
+                  <input 
+                    className="form-input"
+                    type="number" 
+                    step="0.001"
+                    min="0.3"
+                    max="0.6"
+                    value={saturatedMoistureContent} 
+                    onChange={e => setSaturatedMoistureContent(+e.target.value)}
+                  />
+                  <small className="field-description">
+                    Saturated moisture content (0.3-0.6)
+                  </small>
+                </label>
+              </div>
+
+              <div className="input-group">
+                <label className="form-label">
+                  <span>Initial Moisture Content (θi)</span>
+                  <input 
+                    className="form-input"
+                    type="number" 
+                    step="0.001"
+                    min="0.01"
+                    max="0.2"
+                    value={initialMoistureContent} 
+                    onChange={e => setInitialMoistureContent(+e.target.value)}
+                  />
+                  <small className="field-description">
+                    Initial moisture content (0.01-0.2)
+                  </small>
+                </label>
+              </div>
+            </div>
+
+            <div className="info-card">
+              <h4>💡 Green-Ampt Model Information</h4>
+              <p>
+                The Green-Ampt model calculates infiltration rates based on soil physics. 
+                Moisture deficit (Δθ = θs - θi) drives the infiltration process.
+                {soilType && (
+                  <span className="highlight">
+                    {' '}Current moisture deficit: {(saturatedMoistureContent - initialMoistureContent).toFixed(3)}
+                  </span>
+                )}
+              </p>
             </div>
           </section>
         )}

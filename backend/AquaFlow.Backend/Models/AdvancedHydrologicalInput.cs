@@ -54,6 +54,21 @@ public class AdvancedHydrologicalInput
     // Optional: Base flow
     [Range(0, 100)]
     public double BaseFlowCubicMetersPerSecond { get; set; } = 0.0;
+    
+    // Green-Ampt Parameters
+    [Range(0.1, 200)]
+    public double SaturatedHydraulicConductivity { get; set; } = 10.0; // Ks (mm/h)
+    
+    [Range(10, 400)]
+    public double SuctionHead { get; set; } = 110.0; // ψ (mm)
+    
+    [Range(0.3, 0.6)]
+    public double SaturatedMoistureContent { get; set; } = 0.45; // θs
+    
+    [Range(0.01, 0.2)]
+    public double InitialMoistureContent { get; set; } = 0.05; // θi
+    
+    public SoilType SoilType { get; set; } = SoilType.Loam;
 }
 
 public enum AntecedentMoistureCondition
@@ -68,5 +83,21 @@ public enum RunoffModel
     SimpleLinearReservoir,
     CurveNumberMethod,
     LinearReservoirChain,
-    CombinedModel
+    CombinedModel,
+    GreenAmptInfiltration
+}
+
+public enum SoilType
+{
+    Sand,
+    LoamySand,
+    SandyLoam,
+    Loam,
+    SiltLoam,
+    SandyClayLoam,
+    ClayLoam,
+    SiltyClayLoam,
+    SandyClay,
+    SiltyClay,
+    Clay
 }

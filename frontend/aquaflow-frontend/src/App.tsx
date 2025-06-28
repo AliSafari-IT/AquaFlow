@@ -39,6 +39,12 @@ interface AdvancedHydrologicalParameters {
   selectedModel: string;
   evapotranspirationMmPerHour: number;
   baseFlowCubicMetersPerSecond: number;
+  // Green-Ampt parameters
+  saturatedHydraulicConductivity: number;
+  suctionHead: number;
+  saturatedMoistureContent: number;
+  initialMoistureContent: number;
+  soilType: string;
 }
 
 interface CsvDataPoint {
@@ -61,8 +67,39 @@ const getModelEnumValue = (modelString: string): number => {
       return 2;
     case "CombinedModel":
       return 3;
+    case "GreenAmptInfiltration":
+      return 4;
     default:
       return 0; // Default to SimpleLinearReservoir
+  }
+};
+
+const getSoilTypeEnumValue = (soilTypeString: string): number => {
+  switch (soilTypeString) {
+    case "Sand":
+      return 0;
+    case "LoamySand":
+      return 1;
+    case "SandyLoam":
+      return 2;
+    case "Loam":
+      return 3;
+    case "SiltLoam":
+      return 4;
+    case "SandyClayLoam":
+      return 5;
+    case "ClayLoam":
+      return 6;
+    case "SiltyClayLoam":
+      return 7;
+    case "SandyClay":
+      return 8;
+    case "SiltyClay":
+      return 9;
+    case "Clay":
+      return 10;
+    default:
+      return 3; // Default to Loam
   }
 };
 
@@ -195,6 +232,12 @@ const AdvancedModelPage: React.FC<{ csvData: CsvDataPoint[] }> = ({ csvData }) =
         SelectedModel: getModelEnumValue(params.selectedModel),
         EvapotranspirationMmPerHour: params.evapotranspirationMmPerHour,
         BaseFlowCubicMetersPerSecond: params.baseFlowCubicMetersPerSecond,
+        // Green-Ampt parameters
+        SaturatedHydraulicConductivity: params.saturatedHydraulicConductivity,
+        SuctionHead: params.suctionHead,
+        SaturatedMoistureContent: params.saturatedMoistureContent,
+        InitialMoistureContent: params.initialMoistureContent,
+        SoilType: getSoilTypeEnumValue(params.soilType),
       };
 
       console.log('Frontend selected model:', params.selectedModel);

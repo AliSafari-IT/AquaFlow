@@ -14,6 +14,7 @@ public class AdvancedHydrologyService : IAdvancedHydrologyService
             RunoffModel.CurveNumberMethod => CalculateCurveNumberMethod(input),
             RunoffModel.LinearReservoirChain => CalculateLinearReservoirChain(input),
             RunoffModel.CombinedModel => CalculateCombinedModel(input),
+            RunoffModel.GreenAmptInfiltration => CalculateGreenAmptInfiltration(input),
             _ => CalculateSimpleLinearReservoir(input)
         };
     }
@@ -450,5 +451,166 @@ public class AdvancedHydrologyService : IAdvancedHydrologyService
         double tc = 0.0195 * Math.Pow(L, 0.77) * Math.Pow(S, -0.385) / 60;
         
         return Math.Max(0.5, tc); // Minimum 0.5 hours
+    }
+
+    private HydrographResult CalculateGreenAmptInfiltration(AdvancedHydrologicalInput input)
+    {
+        var result = new HydrographResult();
+        var notes = new List<string>();
+        
+        // Apply soil type defaults if needed
+        var soilParams = GetSoilParameters(input.SoilType);
+        double Ks = input.SaturatedHydraulicConductivity > 0 ? input.SaturatedHydraulicConductivity : soilParams.Ks;
+        double psi = input.SuctionHead > 0 ? input.SuctionHead : soilParams.Psi;
+        double thetaS = input.SaturatedMoistureContent > 0 ? input.SaturatedMoistureContent : soilParams.ThetaS;
+        double thetaI = input.InitialMoistureContent;
+        
+        double deltaTheta = thetaS - thetaI; // Moisture deficit
+        double area = input.CatchmentAreaKm2;
+        double dt = input.TimeStepHours;
+        double intensity = input.IntensityMmPerHour;
+        
+        var hydro = new List<HydrographDataPoint>();
+        int totalTimeSteps = input.DurationHours * 2 + 24; // Extended simulation
+        
+        double totalRainfall = 0;
+        double totalInfiltration = 0;
+        double totalRunoff = 0;
+        double cumulativeInfiltration = 0;
+        double peakFlow = 0;
+        double timeToPeak = 0;
+        bool pondingOccurred = false;
+        double timeToPonding = 0;
+        
+        // Check if ponding will occur
+        if (intensity > Ks)
+        {
+            pondingOccurred = true;
+            timeToPonding = (psi * deltaTheta) / (intensity * (intensity - Ks));
+            notes.Add($"Ponding occurs at t = {timeToPonding:F2} hours");
+        }
+        
+        for (int t = 0; t <= totalTimeSteps; t++)
+        {
+            double timeHours = t * dt;
+            double rainfall = (t < input.DurationHours) ? intensity : 0;
+            totalRainfall += rainfall * dt;
+            
+            double infiltrationRate = 0;
+            double runoffRate = 0;
+            
+            if (rainfall > 0)
+            {
+                if (!pondingOccurred || timeHours < timeToPonding)
+                {
+                    // Before ponding: infiltration rate equals rainfall rate (if possible)
+                    infiltrationRate = Math.Min(rainfall, Ks);
+                    runoffRate = Math.Max(0, rainfall - infiltrationRate);
+                }
+                else
+                {
+                    // After ponding: use Green-Ampt equation
+                    if (cumulativeInfiltration > 0)
+                    {
+                        infiltrationRate = Ks * (1 + (psi * deltaTheta) / cumulativeInfiltration);
+                        infiltrationRate = Math.Min(infiltrationRate, rainfall);
+                    }
+                    else
+                    {
+                        infiltrationRate = Ks;
+                    }
+                    runoffRate = Math.Max(0, rainfall - infiltrationRate);
+                }
+            }
+            
+            // Update cumulative infiltration
+            cumulativeInfiltration += infiltrationRate * dt;
+            totalInfiltration += infiltrationRate * dt;
+            
+            // Convert runoff to flow (m³/s)
+            // Runoff rate (mm/h) * Area (km²) * conversion factor
+            double runoffFlow = (runoffRate * area * 1000000) / (1000 * 3600); // m³/s
+            
+            // Add baseflow
+            double totalFlow = runoffFlow + input.BaseFlowCubicMetersPerSecond;
+            
+            if (totalFlow > peakFlow)
+            {
+                peakFlow = totalFlow;
+                timeToPeak = timeHours;
+            }
+            
+            totalRunoff += runoffRate * dt;
+            
+            hydro.Add(new HydrographDataPoint
+            {
+                TimeHours = (int)Math.Round(timeHours),
+                FlowCubicMetersPerSecond = totalFlow
+            });
+        }
+        
+        // Summary statistics
+        double runoffCoeff = totalRainfall > 0 ? totalRunoff / totalRainfall : 0;
+        double infiltrationCoeff = totalRainfall > 0 ? totalInfiltration / totalRainfall : 0;
+        
+        notes.Add($"Total Rainfall: {totalRainfall:F1} mm");
+        notes.Add($"Total Infiltration: {totalInfiltration:F1} mm ({infiltrationCoeff:P1})");
+        notes.Add($"Total Surface Runoff: {totalRunoff:F1} mm ({runoffCoeff:P1})");
+        notes.Add($"Peak Flow: {peakFlow:F2} m³/s at {timeToPeak:F1} hours");
+        notes.Add($"Soil Type: {input.SoilType}");
+        notes.Add($"Saturated Hydraulic Conductivity: {Ks:F1} mm/h");
+        notes.Add($"Suction Head: {psi:F1} mm");
+        notes.Add($"Moisture Deficit: {deltaTheta:F3}");
+        
+        if (!pondingOccurred)
+        {
+            notes.Add("No ponding occurred (rainfall intensity ≤ saturated hydraulic conductivity)");
+        }
+        
+        result.HydrographPoints = hydro;
+        result.CalculationNotes = notes;
+        result.ModelSummary = new RunoffModelSummary
+        {
+            ModelName = "Green-Ampt Infiltration",
+            TotalRainfallMm = totalRainfall,
+            TotalRunoffMm = totalRunoff,
+            RunoffCoefficient = runoffCoeff,
+            PeakFlowCubicMetersPerSecond = peakFlow,
+            TimeToPeakHours = timeToPeak,
+            TotalVolumeCubicMeters = hydro.Sum(h => h.FlowCubicMetersPerSecond) * dt * 3600,
+            ModelSpecificParameters = new Dictionary<string, object>
+            {
+                ["SaturatedHydraulicConductivity"] = Ks,
+                ["SuctionHead"] = psi,
+                ["MoistureDeficit"] = deltaTheta,
+                ["TotalInfiltration"] = totalInfiltration,
+                ["InfiltrationCoeff"] = infiltrationCoeff,
+                ["PondingOccurred"] = pondingOccurred,
+                ["TimeToPonding"] = timeToPonding,
+                ["SoilType"] = input.SoilType.ToString()
+            }
+        };
+        
+        return result;
+    }
+    
+    private (double Ks, double Psi, double ThetaS, double ThetaR) GetSoilParameters(SoilType soilType)
+    {
+        // Typical Green-Ampt parameters by soil type
+        return soilType switch
+        {
+            SoilType.Sand => (117.8, 49.5, 0.437, 0.020),
+            SoilType.LoamySand => (29.9, 61.3, 0.437, 0.035),
+            SoilType.SandyLoam => (10.9, 110.1, 0.453, 0.041),
+            SoilType.Loam => (3.4, 88.9, 0.463, 0.027),
+            SoilType.SiltLoam => (6.5, 166.8, 0.501, 0.015),
+            SoilType.SandyClayLoam => (1.5, 218.5, 0.398, 0.068),
+            SoilType.ClayLoam => (1.0, 208.8, 0.464, 0.075),
+            SoilType.SiltyClayLoam => (1.0, 273.0, 0.471, 0.040),
+            SoilType.SandyClay => (0.6, 239.0, 0.430, 0.109),
+            SoilType.SiltyClay => (0.5, 292.2, 0.479, 0.056),
+            SoilType.Clay => (0.3, 316.3, 0.475, 0.090),
+            _ => (3.4, 88.9, 0.463, 0.027) // Default to Loam
+        };
     }
 }
