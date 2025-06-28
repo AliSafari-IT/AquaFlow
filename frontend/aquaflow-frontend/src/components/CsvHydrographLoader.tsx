@@ -42,7 +42,6 @@ export default function CsvHydrographLoader({ onDataLoaded, isLoading = false }:
 
         // Skip header line and parse data
         const dataPoints: CsvDataPoint[] = [];
-        const startTime = new Date();
         let firstDateTime: Date | null = null;
 
         for (let i = 1; i < lines.length; i++) {

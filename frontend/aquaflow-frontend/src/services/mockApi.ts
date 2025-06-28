@@ -115,7 +115,6 @@ const generateHydrograph = (
   // For advanced model, return the full HydrographResult structure
   const totalVolume = dataPoints.reduce((sum, point) => sum + point.flowCubicMetersPerSecond * timeStep * 3600, 0);
   const totalRunoff = totalVolume * 0.7;
-  const totalInfiltration = intensity * catchmentArea * duration * 1000 - totalRunoff;
   const actualPeakFlow = Math.max(...dataPoints.map(p => p.flowCubicMetersPerSecond));
   const actualPeakTime = dataPoints.find(p => p.flowCubicMetersPerSecond === actualPeakFlow)?.timeHours || 0;
   

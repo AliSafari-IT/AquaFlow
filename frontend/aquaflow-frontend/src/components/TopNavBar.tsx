@@ -1,11 +1,9 @@
 import { Link, useLocation } from "react-router-dom";
-import DDMenu, { MenuItem } from "@asafarim/dd-menu";
+import DDMenu from "@asafarim/dd-menu";
 import "@asafarim/dd-menu/dist/index.css";
 import "@asafarim/react-themes/styles.css";
 import "./TopNavBar.css";
 import { ThemeSelector, useTheme } from "@asafarim/react-themes";
-
-interface TopNavBarProps {}
 
 interface NavigationItem {
   id: string;
@@ -21,7 +19,7 @@ interface HelpMenuItem {
   link: string;
 }
 
-export default function TopNavBar({}: TopNavBarProps) {
+export default function TopNavBar() {
   const location = useLocation();
   const { mode } = useTheme();
   const getCurrentPage = () => {
