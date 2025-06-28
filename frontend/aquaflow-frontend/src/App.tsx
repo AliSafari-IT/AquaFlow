@@ -323,8 +323,8 @@ const CsvDataPage: React.FC<{
   csvData: CsvDataPoint[], 
   onCsvDataLoaded: (data: CsvDataPoint[]) => void 
 }> = ({ csvData, onCsvDataLoaded }) => {
-  const [hydrographData, setHydrographData] = useState<Array<{ timeHours: number; flowCubicMetersPerSecond: number }>>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [hydrographData, ] = useState<Array<{ timeHours: number; flowCubicMetersPerSecond: number }>>([]);
+  const [isLoading, ] = useState(false);
 
   return (
     <div className="app-container">
@@ -443,11 +443,7 @@ const HomePage: React.FC = () => {
 // Main App with Router
 function App() {
   const [csvData, setCsvData] = useState<CsvDataPoint[]>([]);
-
-  const handleCsvDataLoaded = (data: CsvDataPoint[]) => {
-    setCsvData(data);
-  };
-
+ 
   return (
     <Router>
       <div className="app">
