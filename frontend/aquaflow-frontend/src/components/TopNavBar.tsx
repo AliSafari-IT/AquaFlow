@@ -60,6 +60,12 @@ export default function TopNavBar() {
       label: "About AquaFlow",
       link: "/about",
     },
+    {
+      id: "health",
+      text: "Backend Health Check",
+      label: "Backend Health Check",
+      link: "/health",
+    },
   ];
 
   return (

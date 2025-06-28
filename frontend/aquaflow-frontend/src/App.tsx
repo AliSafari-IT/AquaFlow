@@ -16,6 +16,7 @@ import GreenAmptInfiltrationModel from "./components/models/GreenAmptInfiltratio
 import { calculateHydrograph, calculateAdvancedHydrograph, type HydrographDataPoint, type HydrographResult } from "./services/apiService";
 import { isDemoMode } from "./config/api";
 import DemoBanner from "./components/DemoBanner";
+import HealthPage from "./components/HealthPage";
 
 interface HydrologicalParameters {
   intensity: number;
@@ -453,20 +454,13 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/simple" element={<SimpleModelPage csvData={csvData} />} />
           <Route path="/advanced" element={<AdvancedModelPage csvData={csvData} />} />
-          <Route
-            path="/csv"
-            element={
-              <CsvDataPage
-                csvData={csvData}
-                onCsvDataLoaded={(data) => setCsvData(data)}
-              />
-            }
-          />
+          <Route path="/csv" element={<CsvDataPage csvData={csvData} onCsvDataLoaded={setCsvData} />} />
           <Route path="/help" element={<HelpPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/models/simple-linear-reservoir" element={<SimpleLinearReservoirModel />} />
           <Route path="/models/scs-curve-number" element={<SCSCurveNumberModel />} />
           <Route path="/models/green-ampt-infiltration" element={<GreenAmptInfiltrationModel />} />
+          <Route path="/health" element={<HealthPage />} />
         </Routes>
       </div>
     </Router>
