@@ -11,8 +11,8 @@ fi
 REPO_DIR="$BASE_DIR/AquaFlow"
 FRONTEND_DIR="$REPO_DIR/frontend/aquaflow-frontend"
 BACKEND_DIR="$REPO_DIR/backend/AquaFlow.Backend"
-FRONTEND_DEPLOY_DIR="/var/www/asafarim.com/aquaflow-frontend"
-BACKEND_DEPLOY_DIR="/var/www/asafarim.com/aquaflow-backend"
+FRONTEND_DEPLOY_DIR="$BASE_DIR/aquaflow.asafarim.com/public_html"
+BACKEND_DEPLOY_DIR="$BASE_DIR/aquaflow.asafarim.com/api"
 FRONTEND_BACKUP_DIR="$REPO_DIR/backups/frontend"
 BACKEND_BACKUP_DIR="$REPO_DIR/backups/backend"
 LOG_DIR="$REPO_DIR/logs"
@@ -20,7 +20,7 @@ LOG_DIR="$REPO_DIR/logs"
 # Service details
 SERVICE_NAME="aquaflow-api"
 SERVICE_FILE="/etc/systemd/system/$SERVICE_NAME.service"
-HEALTH_CHECK_URL="http://localhost:5185/api/health"
+HEALTH_CHECK_URL="https://localhost:7079/api/health"
 
 # Timestamp for backups
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)

@@ -2,6 +2,14 @@
 	"folders": [
 		{
 			"path": "."
+		},
+		{
+			"path": "/etc/nginx/sites-available",
+			"name": "Nginx Configs"
+		},
+		{
+			"path": "/etc/systemd/system",
+			"name": "Systemd Services"
 		}
 	],
 	"settings": {}
