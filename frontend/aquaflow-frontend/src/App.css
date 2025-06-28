@@ -26,14 +26,20 @@ html {
 }
 
 .app-title {
-  font-size: 3rem;
-  font-weight: 800;
-  margin-bottom: 1rem;
-  background: var(--gradient-primary);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  font-size: 3rem !important;
+  font-weight: 800 !important;
+  margin-bottom: 1rem !important;
+  color: #00ff00 !important; /* Bright green for high contrast debugging */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8) !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  z-index: 9999 !important;
+  position: relative !important;
+  background: none !important;
+  -webkit-text-fill-color: #00ff00 !important;
+  -webkit-background-clip: initial !important;
+  background-clip: initial !important;
 }
 
 .app-description {

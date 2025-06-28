@@ -1,12 +1,8 @@
-import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import DDMenu, { MenuItem } from "@asafarim/dd-menu";
 import "@asafarim/dd-menu/dist/index.css";
 import "@asafarim/react-themes/styles.css";
-
-import { ThemeToggle } from "./ThemeToggle";
 import "./TopNavBar.css";
-import "./DDMenuFix.css";
 import { ThemeSelector, useTheme } from "@asafarim/react-themes";
 
 interface TopNavBarProps {}
