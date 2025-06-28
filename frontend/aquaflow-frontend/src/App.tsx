@@ -13,6 +13,9 @@ import HelpPage from "./components/HelpPage";
 import SimpleLinearReservoirModel from "./components/models/SimpleLinearReservoirModel";
 import SCSCurveNumberModel from "./components/models/SCSCurveNumberModel";
 import GreenAmptInfiltrationModel from "./components/models/GreenAmptInfiltrationModel";
+import { calculateHydrograph, calculateAdvancedHydrograph, type HydrographDataPoint, type HydrographResult } from "./services/apiService";
+import { isDemoMode } from "./config/api";
+import DemoBanner from "./components/DemoBanner";
 
 interface HydrologicalParameters {
   intensity: number;
@@ -105,7 +108,7 @@ const getSoilTypeEnumValue = (soilTypeString: string): number => {
 
 // Simple Model Page Component
 const SimpleModelPage: React.FC<{ csvData: CsvDataPoint[] }> = ({ csvData }) => {
-  const [hydrographData, setHydrographData] = useState<any[]>([]);
+  const [hydrographData, setHydrographData] = useState<HydrographDataPoint[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleCalculate = async (params: HydrologicalParameters) => {
@@ -121,20 +124,17 @@ const SimpleModelPage: React.FC<{ csvData: CsvDataPoint[] }> = ({ csvData }) => 
         initialStorageCubicMeters: params.initialStorageCubicMeters,
       };
 
-      const res = await fetch("http://localhost:5185/api/hydrology/calculate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(requestBody),
-      });
-
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
+      const response = await calculateHydrograph(requestBody);
+      
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to calculate hydrograph');
       }
 
-      const data = await res.json();
       setHydrographData([]);
       setTimeout(() => {
-        setHydrographData(data);
+        if (response.data) {
+          setHydrographData(response.data);
+        }
         setTimeout(() => {
           const chartSection = document.getElementById("chart-section");
           if (chartSection) {
@@ -148,9 +148,10 @@ const SimpleModelPage: React.FC<{ csvData: CsvDataPoint[] }> = ({ csvData }) => 
       }, 100);
     } catch (error) {
       console.error("Error calculating hydrograph:", error);
-      alert(
-        "Failed to calculate hydrograph. Make sure the backend server is running on http://localhost:5185"
-      );
+      const errorMessage = isDemoMode() 
+        ? "Failed to calculate hydrograph in demo mode. Please try again."
+        : "Failed to calculate hydrograph. Make sure the backend server is running on http://localhost:5185";
+      alert(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -201,7 +202,7 @@ const SimpleModelPage: React.FC<{ csvData: CsvDataPoint[] }> = ({ csvData }) => 
 
 // Advanced Model Page Component
 const AdvancedModelPage: React.FC<{ csvData: CsvDataPoint[] }> = ({ csvData }) => {
-  const [advancedResult, setAdvancedResult] = useState<any>(null);
+  const [advancedResult, setAdvancedResult] = useState<HydrographResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showObservations, setShowObservations] = useState(false);
 
@@ -244,21 +245,15 @@ const AdvancedModelPage: React.FC<{ csvData: CsvDataPoint[] }> = ({ csvData }) =
       console.log('Mapped to enum value:', getModelEnumValue(params.selectedModel));
       console.log('Full backend params:', backendParams);
 
-      const res = await fetch(
-        "http://localhost:5185/api/hydrology/calculate-advanced",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(backendParams),
-        }
-      );
-
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
+      const response = await calculateAdvancedHydrograph(backendParams);
+      
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to calculate advanced hydrograph');
       }
 
-      const data = await res.json();
-      setAdvancedResult(data);
+      if (response.data) {
+        setAdvancedResult(response.data);
+      }
       setTimeout(() => {
         const resultsSection = document.getElementById("results-section");
         if (resultsSection) {
@@ -271,9 +266,10 @@ const AdvancedModelPage: React.FC<{ csvData: CsvDataPoint[] }> = ({ csvData }) =
       }, 200);
     } catch (error) {
       console.error("Error calculating advanced hydrograph:", error);
-      alert(
-        "Failed to calculate advanced hydrograph. Make sure the backend server is running on http://localhost:5185"
-      );
+      const errorMessage = isDemoMode()
+        ? "Failed to calculate advanced hydrograph in demo mode. Please try again."
+        : "Failed to calculate advanced hydrograph. Make sure the backend server is running on http://localhost:5185";
+      alert(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -327,7 +323,7 @@ const CsvDataPage: React.FC<{
   csvData: CsvDataPoint[], 
   onCsvDataLoaded: (data: CsvDataPoint[]) => void 
 }> = ({ csvData, onCsvDataLoaded }) => {
-  const [hydrographData, setHydrographData] = useState<any[]>([]);
+  const [hydrographData, setHydrographData] = useState<Array<{ timeHours: number; flowCubicMetersPerSecond: number }>>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleCsvDataLoaded = (data: CsvDataPoint[]) => {
@@ -476,6 +472,7 @@ function App() {
   return (
     <Router>
       <div className="app">
+        <DemoBanner />
         <TopNavBar />
         <Routes>
           <Route path="/" element={<HomePage />} />

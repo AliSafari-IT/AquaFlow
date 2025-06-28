@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './AdvancedHydrologyForm.css';
+import { getHydrologyModels, type HydrologyModelsResponse } from '../services/apiService';
+import { isDemoMode } from '../config/api';
 
 interface AdvancedHydrologicalParameters {
   // Precipitation Parameters
@@ -44,11 +46,10 @@ interface ModelInfo {
 
 interface SoilTypeInfo {
   value: string;
-  name: string;
+  label: string;
   ks: number;
   psi: number;
   thetaS: number;
-  description: string;
 }
 
 interface CurveNumberGuidance {
@@ -95,14 +96,20 @@ export default function AdvancedHydrologyForm({ onCalculate, isLoading = false }
 
   useEffect(() => {
     // Fetch available models and guidance
-    fetch('http://localhost:5185/api/hydrology/models')
-      .then(res => res.json())
-      .then(data => {
-        setAvailableModels(data.models || []);
-        setSoilTypes(data.soilTypes || []);
-        setCurveNumberGuidance(data.curveNumberGuidance || null);
-      })
-      .catch(err => console.error('Failed to fetch model info:', err));
+    const fetchModels = async () => {
+      try {
+        const response = await getHydrologyModels();
+        if (response.success && response.data) {
+          setAvailableModels(response.data.models || []);
+          setSoilTypes(response.data.soilTypes || []);
+          setCurveNumberGuidance(response.data.curveNumberGuidance || null);
+        }
+      } catch (err) {
+        console.error('Failed to fetch model info:', err);
+      }
+    };
+    
+    fetchModels();
   }, []);
 
   // Update Green-Ampt parameters when soil type changes
@@ -409,12 +416,12 @@ export default function AdvancedHydrologyForm({ onCalculate, isLoading = false }
                 >
                   {soilTypes.map(soil => (
                     <option key={soil.value} value={soil.value}>
-                      {soil.name}
+                      {soil.label}
                     </option>
                   ))}
                 </select>
                 <small className="field-description">
-                  {soilTypes.find(s => s.value === soilType)?.description || 'Select soil type for automatic parameter setting'}
+                  Select soil type for automatic parameter setting
                 </small>
               </label>
             </div>

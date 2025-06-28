@@ -1,0 +1,30 @@
+/* Demo Mode Banner */
+.demo-banner {
+  background: linear-gradient(135deg, #ffd700, #ffed4a);
+  color: #333;
+  padding: 12px 20px;
+  text-align: center;
+  font-weight: 600;
+  border-bottom: 2px solid #f39c12;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.demo-banner-icon {
+  margin-right: 8px;
+  font-size: 1.1em;
+}
+
+.demo-banner-text {
+  font-size: 14px;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .demo-banner {
+    padding: 10px 15px;
+    font-size: 13px;
+  }
+}
