@@ -10,13 +10,13 @@ export const API_CONFIG = {
     }
   },
   
-  // Production environment (GitHub Pages - using mock data)
+  // Production environment (real backend with relative URLs)
   production: {
-    baseURL: '', // No backend for GitHub Pages
+    baseURL: '', // Use relative URLs for production
     endpoints: {
-      hydrology: '/mock-data',
-      hydrologyAdvanced: '/mock-data',
-      hydrologyModels: '/mock-data'
+      hydrology: '/api/hydrology/calculate',
+      hydrologyAdvanced: '/api/hydrology/calculate-advanced',
+      hydrologyModels: '/api/hydrology/models'
     }
   }
 };
@@ -49,7 +49,7 @@ export const buildApiUrl = (endpoint: keyof typeof API_CONFIG.development.endpoi
   return `${config.baseURL}${config.endpoints[endpoint]}`;
 };
 
-// Check if we're in demo mode (GitHub Pages)
+// Check if we're in demo mode (GitHub Pages only)
 export const isDemoMode = (): boolean => {
-  return getCurrentEnvironment()  === 'production' && window.location.hostname.includes('github.io');
+  return window.location.hostname.includes('github.io');
 };
