@@ -326,27 +326,6 @@ const CsvDataPage: React.FC<{
   const [hydrographData, setHydrographData] = useState<Array<{ timeHours: number; flowCubicMetersPerSecond: number }>>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleCsvDataLoaded = (data: CsvDataPoint[]) => {
-    const chartData = data.map((point) => ({
-      timeHours: point.timeHours,
-      flowCubicMetersPerSecond: point.flowCubicMetersPerSecond,
-    }));
-
-    onCsvDataLoaded(data); // Update App-level state
-    setHydrographData(chartData);
-
-    setTimeout(() => {
-      const chartSection = document.getElementById("chart-section");
-      if (chartSection) {
-        chartSection.scrollIntoView({
-          behavior: "smooth",
-          block: "start",
-          inline: "nearest",
-        });
-      }
-    }, 200);
-  };
-
   return (
     <div className="app-container">
       <header className="app-header">
@@ -359,7 +338,7 @@ const CsvDataPage: React.FC<{
       <main className="app-main">
         <div className="form-section">
           <CsvHydrographLoader
-            onDataLoaded={handleCsvDataLoaded}
+            onDataLoaded={onCsvDataLoaded}
             isLoading={isLoading}
           />
         </div>
