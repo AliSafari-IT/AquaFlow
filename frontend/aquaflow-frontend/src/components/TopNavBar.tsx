@@ -1,9 +1,11 @@
-import { Link, useLocation } from "react-router-dom";
-import DDMenu from "@asafarim/dd-menu";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import DDMenu, { MenuItem } from "@asafarim/dd-menu";
 import "@asafarim/dd-menu/dist/index.css";
 import "@asafarim/react-themes/styles.css";
 import "./TopNavBar.css";
 import { ThemeSelector, useTheme } from "@asafarim/react-themes";
+
+interface TopNavBarProps {}
 
 interface NavigationItem {
   id: string;
@@ -19,8 +21,9 @@ interface HelpMenuItem {
   link: string;
 }
 
-export default function TopNavBar() {
+export default function TopNavBar({}: TopNavBarProps) {
   const location = useLocation();
+  const navigate = useNavigate();
   const { mode } = useTheme();
   const getCurrentPage = () => {
     const path = location.pathname;
@@ -38,6 +41,7 @@ export default function TopNavBar() {
     { id: "simple", label: "Simple Model", icon: "🌊", path: "/simple" },
     { id: "advanced", label: "Advanced Models", icon: "⚙️", path: "/advanced" },
     { id: "csv", label: "Load CSV Data", icon: "📊", path: "/csv" },
+    { id: "health", label: "Health Check", icon: "🩺", path: "/health" }, // New item
   ];
 
   const helpMenuItems: HelpMenuItem[] = [
@@ -65,7 +69,7 @@ export default function TopNavBar() {
       text: "Backend Health Check",
       label: "Backend Health Check",
       link: "/health",
-    },
+    }
   ];
 
   return (
@@ -106,13 +110,7 @@ export default function TopNavBar() {
             className="dd_menu dd_menu_trigger"
             onItemClick={(item) => {
               if (item.link) {
-                if (item.link.startsWith("/help")) {
-                  // Navigate to help page and handle hash scrolling
-                  window.location.href = item.link;
-                } else if (item.link === "/about") {
-                  // Navigate to about page
-                  window.location.href = item.link;
-                }
+                navigate(item.link);
               }
             }}
           />

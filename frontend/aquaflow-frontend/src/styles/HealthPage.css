@@ -1,0 +1,77 @@
+/* HealthPage.css */
+
+/* Container for the health page */
+.health-page-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-family: 'Arial', sans-serif;
+  min-height: 100vh;
+}
+
+/* Title styling */
+.health-page-container h2 {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: var(--primary-color);
+}
+
+/* Loading message styling */
+.health-page-container p {
+  font-size: 1.2rem;
+  color: var(--secondary-color);
+}
+
+/* Error message styling */
+.health-error {
+  background-color: rgba(255, 0, 0, 0.1);
+  color: red;
+  padding: 1rem;
+  border: 1px solid red;
+  border-radius: 8px;
+  margin: 1rem 0;
+  text-align: center;
+  width: 100%;
+  max-width: 600px;
+}
+
+/* Success message styling */
+.health-success {
+  background-color: rgba(0, 255, 0, 0.1);
+  color: green;
+  padding: 1rem;
+  border: 1px solid green;
+  border-radius: 8px;
+  margin: 1rem 0;
+  text-align: center;
+  width: 100%;
+  max-width: 600px;
+}
+
+/* Timestamp styling */
+.health-timestamp {
+  font-size: 0.9rem;
+  color: var(--secondary-color);
+  margin-top: 0.5rem;
+}
+
+/* Refresh button styling */
+.health-refresh {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 1.5rem;
+}
+
+.health-refresh:hover {
+  background-color: var(--primary-color-dark);
+}

@@ -1,5 +1,5 @@
 // components/HydrographChart.tsx
-import { Line } from 'react-chartjs-2';
+import { Line, getElementAtEvent, getDatasetAtEvent } from 'react-chartjs-2';
 import React, { useRef, useState, useEffect } from 'react';
 import { Chart as ChartJS } from 'chart.js';
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "./HealthPage.css";
+import "../styles/HealthPage.css";
 
 interface HealthStatus {
   status: string;
@@ -14,7 +14,7 @@ const HealthPage: React.FC = () => {
   useEffect(() => {
     setLoading(true);
     setError(null);
-    fetch("/api/health")
+    fetch("https://localhost:7079/api/health")
       .then((res) => {
         if (!res.ok) throw new Error("Backend not reachable");
         return res.json();

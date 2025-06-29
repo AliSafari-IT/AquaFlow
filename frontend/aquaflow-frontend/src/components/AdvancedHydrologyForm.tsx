@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './AdvancedHydrologyForm.css';
-import { getHydrologyModels } from '../services/apiService';
+import { getHydrologyModels, type HydrologyModelsResponse } from '../services/apiService';
+import { isDemoMode } from '../config/api';
 
 interface AdvancedHydrologicalParameters {
   // Precipitation Parameters
