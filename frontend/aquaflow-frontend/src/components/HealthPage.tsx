@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../styles/HealthPage.css";
+import { buildApiUrl } from "../config/api";
 
 interface HealthStatus {
   status: string;
@@ -14,7 +15,7 @@ const HealthPage: React.FC = () => {
   useEffect(() => {
     setLoading(true);
     setError(null);
-    fetch("https://localhost:7079/api/health")
+    fetch(buildApiUrl("hydrologyModels").replace("/api/hydrology/models", "/api/health"))
       .then((res) => {
         if (!res.ok) throw new Error("Backend not reachable");
         return res.json();
