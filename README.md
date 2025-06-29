@@ -58,6 +58,21 @@ AquaFlow offers a complete suite of hydrological modeling tools with an intuitiv
 - Multi-reservoir routing capabilities
 - Real-time parameter validation and guidance
 
+
+### 📊 **Model Performance Statistics and Comparison**
+
+AquaFlow provides detailed performance statistics and comparison metrics for hydrological models. This feature allows users to evaluate model accuracy and reliability by comparing observed and simulated data.
+
+![Model Performance Statistics and Comparison](frontend/aquaflow-frontend/public/img/model-performance-statistics-and-comparison.png)
+
+**Key Features:**
+- Statistical metrics such as Nash-Sutcliffe Efficiency (NSE), Root Mean Square Error (RMSE), and Mean Absolute Error (MAE).
+- Visual overlays of observed and simulated hydrographs.
+- Interactive charts for detailed analysis.
+- Exportable performance reports for documentation and sharing.
+
+---
+
 ### 📊 **CSV Data Analysis** (`/csv`)
 - Load real-world hydrograph data from CSV files
 - Automatic data parsing and validation
