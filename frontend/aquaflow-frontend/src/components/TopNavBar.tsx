@@ -21,7 +21,7 @@ interface HelpMenuItem {
   link: string;
 }
 
-export default function TopNavBar({}: TopNavBarProps) {
+export default function TopNavBar(_props: TopNavBarProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const { mode } = useTheme();
