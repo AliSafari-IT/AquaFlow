@@ -129,6 +129,12 @@ AquaFlow provides detailed performance statistics and comparison metrics for hyd
 
 ---
 
+## 🌐 Live Demo
+
+Explore AquaFlow directly through our live demo:
+
+[🌊 AquaFlow Live Demo](https://alisafari-it.github.io/AquaFlow/)
+
 ## 🛠️ Technology Stack
 
 ### **Frontend**
