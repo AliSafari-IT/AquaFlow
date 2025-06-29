@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import DDMenu, { MenuItem } from "@asafarim/dd-menu";
+import DDMenu from "@asafarim/dd-menu";
 import "@asafarim/dd-menu/dist/index.css";
 import "@asafarim/react-themes/styles.css";
 import "./TopNavBar.css";
